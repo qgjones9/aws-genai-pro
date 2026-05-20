@@ -1,4 +1,4 @@
-# Section 1
+# Section 1: Generative AI Fundamentals and Bedrock
 
 | Lecture Title | Lecture Description |
 |--------------|--------------------|
