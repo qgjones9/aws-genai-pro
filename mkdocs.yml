@@ -1,0 +1,67 @@
+site_name: AWS GenAI Pro
+site_description: Notes and reference for AWS generative AI professional certification
+
+docs_dir: docs
+site_dir: site
+
+watch:
+  - docs
+  - mkdocs.yml
+
+nav:
+  - Home: index.md
+  - Section 1: section-1/index.md
+  - Section 2: section-2/index.md
+  - Section 3: section-3/index.md
+  - Section 4: section-4/index.md
+  - Section 5: section-5/index.md
+  - Section 6: section-6/index.md
+  - Section 7: section-7/index.md
+  - Section 8: section-8/index.md
+  - Section 9: section-9/index.md
+  - Section 10: section-10/index.md
+  - Section 11: section-11/index.md
+  - Section 12: section-12/index.md
+  - Section 13: section-13/index.md
+  - Section 14: section-14/index.md
+  - Section 15: section-15/index.md
+  - Section 16: section-16/index.md
+  - Section 17: section-17/index.md
+  - Section 18: section-18/index.md
+  - Section 19: section-19/index.md
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: teal
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: teal
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - toc:
+      permalink: true
