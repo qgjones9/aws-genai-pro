@@ -1,2 +1,69 @@
 # OpenSearch Index Management and Designing for Stability
 
+## Hot, Ultra-Warm, and Cold Storage
+
+One way Amazon has extended Elasticsearch is by adding different storage type or cold warm storage Let's talk about that a little bit 'cause you might be asked about it. So your standard data nodes use what's called hot storage by default, and on your data nodes, it's right there in the node either through an instance store or through an EBS Elastic Block Store volume. This will give you the fastest performance, it's just like, you know, normal storage on EC2 instance, so it's the default what you'd expect to get, but it's also the most expensive.
+
+So as an alternative, they've offered something new called ultra warm storage. And ultra warm storage, which they also call warm in the documentation, pretty much interchangeably this uses S3 to actually back the data plus a caching layer to make it, well, warmer than warm and, well, maybe ultra warm, I guess is what they're calling it there. Ultra-Warm Storage is best for indices that have not a lot of writes going to them, so for things that are immutable like log data, Ultra-Warm Storage might be a good choice for that. It is slower performance, but it's much lower cost because you're using S3 instead of local storage. Now, in order to use Ultra-Warm Storage, you need to have a dedicated master node, and practice you usually have three of them, but we'll talk about that more in a bit. I just have a standalone cluster without a master node and I use different storage types.
+
+And if you want to save even more money, there's cold storage available now as well. I'd also use S3 to back it up and it's even cheaper. this is intended for uses like periodic research or forensic analysis on older data, for example, if you have really old log data that you just don't care about that much anymore cold storage might be a good place for it. Again, you must have a dedicated master and you also have to have ultra-warm enabled as well in order to use cold storage. one gotcha with cold storage is that it is currently not compatible with t2 or t3 instance types in the data nodes. And if you are using fine-grained access control, you need to map 
+
+## Migrating Between Storage Types
+
+So a couple of implementation details there. And you can also migrate your data between different storage types as you want, and as we'll see, there's ways to actually automate migrating data from hot to warm to cold storage over time if you want to. So you don't have to decide up front what kind of storage you want for your data, you can actually move data in your indices back and forth between them as needed.
+
+## Index State Management
+
+And that leads us to index state management. Really more of an Elastic Search feature in general, and you know, we could talk for hours and hours and hours about the details and depths of Elastic Search itself. There's a whole course I have on that that lasts forever, but we're just gonna talk about enough to get you through the exam here. So the idea of index state management or ISM is to automate index management policies, and here are some examples of that.
+
+So for example, if you have old indices that you want to delete after a period of time, if you have indices that are broken up by month or something, and you only care about data within the past three years You might have an index state management policy that automatically deletes those old indices after a certain amount of period of time has elapsed. You might also use it to move indices into a read-only state after some period of time you might need to do that for compliance reasons, you know, to make sure you're not messing with data after the fact. And like we talked about in the previous slide, you can also use this to automatically move indices from hot to ultra-warm to cold storage over time as well. So if you know that you're going to be accessing your data less frequently, the older it becomes, It might make sense to automatically move that into cooler and cooler storage as time goes on in order to save some money.
+
+You can also use index state management to reduce your replica count over time as well. So if you have an index that's if you care less about it as time goes on, you could reduce its replica count over time too, if you don't care as much about losing that data over time. And you can also use it for automating index snapshots, which is sort of backing up your index and putting it somewhere.
+
+## ISM Policy Scheduling and Notifications
+
+ISM policies are run every thirty to forty-eight minutes. It's a weird number, isn't it? the reason that it has that range is because there's a random jitter introduced to it to make sure that you're not running index data on all of your indices at the same time that end up impacting the performance of your cluster. Also, you can set in-state management up to send notifications once they're done, and one thing that's kind of specific to Amazon is you can even set a notification through Amazon Chime to a room to let you know that a policy has been enacted.
+
+## Index Rollups
+
+More index management stuff. index rollups. So you can also periodically roll up your old data into summarized indices. So this can save you a ton of money on storage costs. If after a certain period of time you don't need detailed information but just the summary information, this is a great idea for saving money. So that new rolled up index might have fewer fields. Maybe you're throwing away some fields that you don't really care about after a certain period of time. Or coarser time buckets. That's another way you can consolidate stuff.
+
+## Index Transforms
+
+Also, index transforms are available. Same idea as rollups, but the purpose here isn't to summarize data, but just to analyze it differently, to create a different view of it. And you might do things like groupings and aggregations. So, for example, I could group all of my data by some identifier and have a separate view that's grouped by that separate field that I care about. Or I could have aggregations. Maybe I care about the sum of everything within that group, or the sum of everything within a certain period of time, or the average, whatever it might be. An index transform can automatically create those new views for you.
+
+## Cross-Cluster Replication
+
+Let's also talk about cross-cluster replication in the context of index management. So you can actually replicate your indices and mappings and metadata across different domains, and this is important for a couple of reasons. First of all, it ensures high availability in the event of an outage. So if you're replicating all of your data to some other cluster that's in another data center somewhere, or maybe even a different region, if that region goes down or that data center goes down, you'll still have that backup copy running someplace else because you were replicating it.
+
+Also, it's an idea to reduce latency if you have a global application. So you can replicate your data geographically around the world using replication for better latency from different locations around the world. So if you have someone trying to hit your open search cluster from Europe, it's better to have a replica of that cluster in Europe than making them go across the ocean to hit a cluster that's located in the United States or something.
+
+The way it works is you set up what's called a follower index that pulls data from what they call a leader index. So the leader index is basically your, your master copy and the follower is gonna be the replica, is the terminology they use there. And to use cross-cluster replication, you need to have fine-grained access control enabled on your OpenSearch cluster and node-to-node encryption to make sure that we can do that securely.
+
+## Remote Reindex
+
+There's also a feature that's similar called Remote Reindex that allows you to copy indices specifically from one cluster to another cluster on demand. So if you don't need to replicate the entire cluster itself along with all of its mappings and metadata, Remote Reindex allows you to copy just an index from one cluster to another whenever you need to.
+
+## Dedicated Master Nodes
+
+A few notes on OpenSearch stability that you might need to know about. So first of all, it's important to have at least three dedicated master nodes, that's the best practice. If you have one, it might go down, and then you're out of, you're out of commission, right? You can't just have a single master node because that's a single point of failure.
+
+Why not just have two? Well, the problem with two master nodes is that you can get into what's called a split-brain condition. There can be a failure mode where you have two master nodes at the same time basically, and nobody knows which one is the actual authoritative master node. So by having three master nodes, that third one gets to decide who is the actual master in that case. So by having at least three master nodes, you can avoid the split-brain failure mode, and you can avoid the single point of failure of just having one. So that is considered the best practice.
+
+## Disk Space and Storage Estimates
+
+Also, make sure you don't run out of disk space. That's actually the the number one problem with OpenSearch and Elasticsearch clusters in general. So you gotta do the math. Make sure you're allocating enough storage capacity for what you wanna store. And I haven't heard any reports of the exam going into this level of detail, but this is the sort of thing that they like to ask about.
+
+So if you do need to estimate your storage requirements for a given set of data one way to roughly come at what you need is to take the size of the source data itself that you're trying to store times one plus the number of replicas. So obviously you need to account for all that data being stored on your primary cluster plus Any replicas that you might be replicating it to for backup purposes or for latency purposes, like we talked about, times one point four five, and that's just an estimate of all the overhead associated with storing that data.
+
+## Shards
+
+Also, you need to choose the correct number of shards. That too is a bit of a science and unfortunately, something you just kind of have to experiment with to get the the right balance there. But they also offer a, an equation here that g at least gets you in the ballpark. So the idea here is to take the size of your source data plus how much room for growth you wanna bake into it, you know, how much do I wanna assume that I wanna have access capacity for, for growth of that data over time, times one plus indexing overhead.
+
+So what is indexing overhead? Well it's not just storing your data, it's also storing data about us needed to index that data, and that takes additional space. Typically, that's about another ten percent. So Roughly, you can use that as an estimate, although you can actually query your indices to get the exact number. There's a couple of commands that you can send to it to say, "Give me the exact size of this index," and you can take that data, compare it to the size of the data itself, and figure out the actual indexing overhead for your specific index if you need to. But ten percent's a good guess. Then divide that by your desired shard size, how much data you're putting in each shard, and that should give you an estimate of the total number of shards that you need to hold your data.
+
+Now in some rare cases, you may also need to limit the number of shards per node, however in practice this usually doesn't become a problem. You usually run out of disk space before you run out of shards per node
+
+## Instance Types
+
+Also, you need to choose your instance types wisely. Again, you need at least three data nodes for all the same reasons. one is a single point of failure, and two, you can get into weird states. At least three is the best practice. And mostly, you just need to think about your storage requirements. So again, OpenSearch is very storage-heavy, so you're gonna be thinking mostly about how do I get the right nodes with enough storage? Some examples would be m6g.large.search, these are all .search instance types, or if you need something bigger, i3.4xlarge.search. And if you're actually storing petabytes of information, you might opt to use the i3 dot sixteen xlarge dot search instance type
