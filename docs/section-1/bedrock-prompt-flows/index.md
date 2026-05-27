@@ -1,45 +1,148 @@
 # Bedrock Prompt Flows
 
-## From Prompt Flows to Bedrock Flows
+## Lecture notes
 
-Alright, we got a prompt, what do we do with it? One thing we can do with it is use it within a Bedrock flow, and this actually used to be called prompt flows, but it's become more of a general purpose tool. So these days we're talking about a larger flows feature, not just prompt flows. The idea is to have a mechanism for chaining prompts and models together, and it can do other stuff too. So it's basically a way to visually create these larger applications that might involve multiple prompts and multiple tools. So we're kind of getting into agentic AI land there. That's another section we're getting there, but Kind of touching on it here.
+### What this lecture covers
 
-## Nodes and Connections
+<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-how-it-works.html">Amazon Bedrock Flows</a> (formerly emphasized as “prompt flows”) chain **prompts, models, knowledge bases, and logic** into visual, often **low-code** applications. Flows connect **nodes** with **data links** and optional **conditional branches**, using saved prompts from [Amazon Bedrock Prompt Management](../amazon-bedrock-prompt-management/index.md).
 
-Now, a flow consists conceptually of nodes and connections between them. So really, you know, simple example here at the bottom here, we have input coming in from the user, the flow input, we'd not say a, a node, that input, it's being connected to another base retrieval. So all we're doing is taking the input from that flow input, from the user input, we're using that to do a knowledge base lookup, and then the output goes to our output, which is another node tied together by a connection. So world's simplest flow here as an example, nodes and connections, right?
+### Key definitions (from the lecture)
 
-## Conditional Connections and Branching
+| Term | Definition |
+|---|---|
+| **Flow** | A Bedrock application graph: **nodes** + **connections** that process inputs into outputs. |
+| **Node** | A step such as **flow input**, **prompt**, **knowledge base retrieval**, **condition**, or **flow output**. |
+| **Connection** | Data path between nodes (what field feeds the next step). |
+| **Conditional connection** | Branching path based on a **condition** (e.g., route “documentation” vs “other”). |
+| **Flow Builder** | Console visual designer to build flows **without code** (API/JSON alternative exists). |
+| **Flow input / output** | Entry and exit points; input can be **raw text** or **structured fields** (genre, number). |
+| **Saved prompt node** | A node that invokes a **versioned prompt** from Prompt Management with mapped variables. |
+| **Knowledge base node** | Retrieves context from a Bedrock knowledge base and passes it downstream. |
+| **Condition node** | Routes execution based on prior node output (e.g., classification result). |
 
-Now, those connections can also be conditional, and we'll see how that works in a minute, but I can branch things off into different flows depending on what's going on. So, for example, if my input said I don't want to do one thing versus another, maybe I can route that to different paths in my flow to perform different tasks within the same system.
+### Key distinctions / comparisons
 
-## Flow Builder and the API
+| Item | Notes |
+|---|---|
+| **Flows vs single InvokeModel call** | Flows orchestrate **multi-step** logic (retrieve → classify → branch → answer). |
+| **Flows vs agents** | Lecture positions flows as stepping toward **agentic** systems; agents are covered more deeply later—flows are **composer graphs** you design explicitly. |
+| **Visual builder vs API** | Same flow definable in console or **JSON via API** for CI/CD (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-code-ex.html">code samples</a>). |
+| **Unstructured vs structured input** | Flow input can be a single string **or** named fields wired into `{{variables}}`. |
 
-Now, we can generate these visually with the Flow Builder tool in the console, which means you can generate these AGENTIC AI applications without writing any code. Kind of exciting, right? Or if you want to, there is, of, of course, an API as well, so you can define the flows you want in JSON if you want to and build your own system around developing these flows too. That's also an option.
+### The problem (why you need it)
 
-## Agentic Systems and Parallel Models
+- Real apps rarely need **one prompt**—they need retrieval, routing, and multiple models.
+- Hard-coding orchestration in Lambdas is slow to iterate; product owners need a **visual** path to prototype.
 
-So again, we are getting into the world of AGENTIC systems here in that we're having more complicated systems that might have more than one model running in parallel, right? But it doesn't have to be that complicated, so we can see. In this simple example here.
+### The solution
 
-## Saved Prompts in Prompt Management
+**Simple playlist flow (lecture):**
 
-Now, how does this interact with prompts in our prompt management system? Well, let's take a look. So, in this simple example here, we have our input coming in where we're saying, "Okay, I want a playlist for a given genre and number of songs," and we've wired that up into our saved prompt there that we just made. And I can say, "Okay, take out that genre and number from the input there," and I'm gonna use that saved prompt to actually hit a foundation model, and the output from that model completion will go to my flow output. So again, a very simple flow here that's just tying that saved prompt with user input and the output from that foundation model using that reusable prompt in the middle there.
+```
+Flow input (genre, number)
+    │
+    ▼
+Saved prompt "music-playlist" → foundation model
+    │
+    ▼
+Flow output (playlist text)
+```
 
-## Playlist Demo and Structured Input
+**Simple RAG flow (lecture diagram):**
 
-So, very simple way of applying those saved prompts in our prompt management system to do something simple. You can see here in this little example, it actually did something. So in my little test application here in my prompt flow builder, it recognizes that I have those two input fields that I need to populate from the input. So the input isn't necessarily just raw text, it can be structured data. And you can see it recognize that here, and on the left under the input, we are explicitly passing in a genre and a number, and we're gonna take that in, pass that into my save prompt to get back a playlist on the right there.
+```
+Flow input (user query)
+    │
+    ▼
+Knowledge base retrieval
+    │
+    ▼
+Flow output
+```
 
-## Stored Prompts as Flow Components
+**Conditional documentation router (lecture):**
 
-So again, the takeaway here is those stored prompts that we've versioned and had variants of and all that stuff, those can be used as flow components to actually build applications around those saved prompts, and you can chain those together to do more complicated things using conditions. Also, you can see that you can enforce pre and post-processing on the inputs and outputs because we've sort of imposed some structure on that as well.
+```
+Flow input (raw user text)
+    │
+    ▼
+Saved prompt: classify intent
+    │
+    ▼
+Condition node
+    ├─ if "documentation" → Knowledge base node → output
+    └─ else → Saved prompt: general professional answer → output
+```
 
-## Conditional Flow Overview
+- **Pre/post-processing** can be enforced because inputs/outputs are **structured** across nodes.
+- Saved prompts act as **reusable components** inside larger graphs.
 
-And just to give you an example of a conditional flow to see what sort of more complicated things you can do, here's an example. So in this particular example we have some random document of a string type coming in, so the flow input is just raw text from a user. Now I'm gonna pass that raw input into a save prompt that categorizes that input, and it might say, "Okay, this person is asking about retrieving some documentation, "or maybe they're asking about something else entirely. That save prompt's job is to take that input prompt and categorize it somehow into what the user wants.
+### How to apply it
 
-## Documentation Routing and Knowledge Base
+1. Publish prompts in **Prompt Management** (e.g., `music-playlist` v1, classifier prompt).
+2. **Build → Flows → Create flow** in console (Flow Builder).
+3. Add **input** node; define fields (`genre`, `number`) or raw text.
+4. Add **prompt** node; select saved prompt; map input fields to `{{variables}}`.
+5. Add **output** node; connect model completion.
+6. For branching: add **condition** node after a **classification prompt**; wire true/false paths to KB vs general prompt.
+7. Test in builder; deploy/alias per <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-get-started.html">getting started guide</a>.
 
-Now that condition node is saying, "If they're asking about documentation, if the output of that prompt was documentation, I am gonna pass that off to this knowledge base node over here, right? So it's gonna say, "Okay, you want documentation? I'll go look it up in this knowledge base and give you the answer. "If not, if it's something other than documentation, I'm gonna take that path on the bottom instead. " And I have a separate save A save prompt there that's more general purpose, it says, "Okay, take whatever they said and answer it in a professional manner," and the output of that prompt will be my final output in that case.
+### Examples
 
-## Conditional Flow with Saved Prompts
+**1. Playlist generator (structured input)**
 
-So, simple example there of using a conditional prompt. In this case, we're using one save prompt to categorize the input, having a condition though to route that processing based on what it was categorized as, and in one case we're doing a knowledge base hit, in other case we're just passing it along to another FM. All right? So, a slightly more example of a complex flow, again, using saved prompts for prompt management.
+User supplies `genre=vocal jazz`, `number=10`; flow passes into saved prompt; output is ten-track list (demo screenshot in lecture).
+
+**2. Doc vs chit-chat router**
+
+Classifier prompt labels intent; documentation path hits [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md); other path uses a generic professional-response prompt.
+
+**3. API-driven flow in CI**
+
+Team exports flow JSON, versions it in Git, and uses `CreateFlow` / `InvokeFlow` in staging pipelines.
+
+### Limitations / edge cases
+
+- **Complexity creep** — Conditional graphs need clear **classification labels** and test cases to avoid wrong branches.
+- **Not a full agent framework** — Tool use, memory, and autonomous planning live in richer agent patterns (later course material).
+- **Guardrails** — Attach guardrails to flows where required (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-guardrails.html">flows guardrails</a>).
+
+### Industry scenarios
+
+**1. IT service desk**
+
+Flow classifies tickets (password reset vs how-to doc); documentation intents query an internal KB; others get a templated escalation message.
+
+**2. E-commerce shopping assistant**
+
+Structured input (`product_sku`, `customer_tier`) feeds variant prompts; VIP branch adds loyalty copy before output.
+
+**3. Media company research tool**
+
+Journalists submit a story idea string; router sends entertainment topics to one KB, finance topics to another, via conditional prompts.
+
+### Key takeaways
+
+- Bedrock Flows = **nodes + connections**, with optional **conditional routing**.
+- Use **Flow Builder** for no-code orchestration or the **Flows API** for programmatic control.
+- **Saved prompts** from Prompt Management are first-class flow components.
+- Inputs can be **structured** (mapped to prompt variables), enabling pre/post processing patterns.
+- Conditional flows combine **classification prompts**, **knowledge bases**, and **general prompts** for multi-path apps.
+
+### References
+
+**In this repo**
+
+- [Amazon Bedrock Prompt Management](../amazon-bedrock-prompt-management/index.md)
+- [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md)
+- [Bedrock Guardrails](../bedrock-guardrails/index.md)
+- [Enforcing Use of Structured Data](../enforcing-use-of-structured-data/index.md)
+
+**AWS documentation**
+
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-how-it-works.html">How Amazon Bedrock Flows works</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-get-started.html">Create your first flow</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-create.html">Create and design a flow</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/key-definitions-flow.html">Key definitions for Amazon Bedrock Flows</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-code-ex.html">Run Amazon Bedrock Flows code samples</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-guardrails.html">Include guardrails in your flow</a>

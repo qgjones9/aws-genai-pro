@@ -1,29 +1,127 @@
 # AWS Well-Architected Tool Generative AI Lens
 
-- [Generative AI Lens - AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html)
+## What this lecture covers
 
-## What is the Generative AI lens
+The <a href="https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html">AWS Well-Architected Generative AI Lens</a>—a **best-practices guide** (not a service) aligned to the six Well-Architected pillars—and the **generative AI lifecycle** stages the exam may test in **ordering** questions.
 
-Another thing specifically called out in the exam guide is the AWS Well-Architected Generative AI Lens. What is that? Well, it's not really a service, it's more of a set of best practices that have been defined. So just like we have a Well-Architected Machine Learning Lens, there's also a Well-Architected Generative AI Lens, and it's really just an overview of what generative AI is and best practices for actually using it within a enterprise scenario.
+## Key definitions (from the lecture)
 
-## Homework and review
+| Term | Definition |
+|---|---|
+| **Well-Architected Framework** | AWS guidance organized around **six pillars** that apply across workloads. |
+| **Generative AI Lens** | Lens-specific best practices mapping **generative AI** work to those pillars—companion to lenses such as the Machine Learning Lens. |
+| **Generative AI lifecycle** | Scoped workflow: scope → select model → customize → develop/integrate → deploy → measure/improve (and iterate). |
 
-So rather than regurgitate the whole thing to you here, I'm going to assign this to you as homework at some point. Maybe not now, but sometime before you take the exam, it would be a good idea to review this. And it is just a bunch of web pages basically with best practices, and here's a link to it if you need it, or just search for it. so every topic that's in this will be covered by the course, so you're not gonna miss any important information by not reading this. But again, it's a useful review tool, and it's possible the exam will refer to it explicitly, so I do recommend going through this at one point.
+## The six pillars (all domains)
 
-## Well-Architected pillars
+| Pillar | Focus |
+|---|---|
+| **Operational excellence** | Run and monitor systems to deliver business value. |
+| **Security** | Protect data and workloads. |
+| **Reliability** | Recover from failures; meet demand. |
+| **Performance efficiency** | Use resources efficiently. |
+| **Cost optimization** | Avoid unnecessary spend. |
+| **Sustainability** | Minimize environmental impact of cloud use. |
 
-At a high level The whole well-architected thing is centered around this idea of these different domains all having these six things in common. So no matter what you're doing with AWS, you should care about operational excellence, you should care about security, reliability, performance efficiency, cost optimization, and sustainability.
+The Generative AI Lens maps GenAI practices onto **each** pillar—same structure as other Well-Architected lenses.
 
-## Mapping generative AI to the pillars
+## Key distinctions / comparisons
 
-And the whole point of the well-architected framework is to map all of these domains, such as generative AI, to best practices in all six of those pillars, if you will. So that's the idea of the well-architected generative AI lens. And at a very high level, this is how it's structured.
+| Item | Notes |
+|---|---|
+| **Lens vs service** | A **review tool and documentation set**—not something you “enable” like Bedrock. |
+| **Course coverage vs lens** | Course material covers topics in the lens; the lens is still a useful **pre-exam review**. |
+| **Lifecycle order vs ad hoc build** | Exams may ask you to **order** lifecycle phases correctly. |
 
-## Generative AI lifecycle
+## The problem (why the lens exists)
 
-So it starts off with the concept of this generative AI life cycle. This is probably worth knowing.
+- GenAI projects span **model choice, safety, cost, and operations**—easy to optimize one dimension and neglect others.
+- Teams need a **checklist** aligned with how AWS frames architecture reviews.
+- Certification items may reference the lens or **lifecycle ordering** explicitly.
 
-So we start off by scoping what we wanna do with our generative AI application. You know, what are we actually trying to accomplish? That's a good thing to define. Once we know we wanna do, we can select the model that's appropriate to that task, right? And maybe that model off the shelf doesn't do what we wanna do quite so, but we can customize it or fine-tune it or augment it to meet our needs. So that's where the model customization part of the cycle comes in. Once I have a model and I've customized it, I can start building on top of it. So that's the Development and integration stage. When I'm done developing and integrating, I can deploy it and I can measure its results and continually improve it. And maybe I can go back and scope some more and start the cycle anew and build more and more stuff on top of this application.
+## The solution: use the lens as review homework
 
-## Exam tip: ordered lifecycle questions
+- Read the linked lens pages before the exam (lecture assigns as **homework**).
+- Use it to cross-check security, reliability, cost, and operational practices for Bedrock workloads.
+- Memorize the **generative AI lifecycle** sequence for drag-and-drop / ordering questions.
 
-So this is how the generative AI lens defines the generative AI life cycle. Kind of common sense, but these sort of specific orders are the sorts of things that the exam likes to test you on in those ordered question types that they have now. So one of the newer exam question types is saying, "Here's five things, put them in the right order." Well, there's things that might be in the right order, so you might wanna, might wanna pay attention to that one.
+### Generative AI lifecycle (exam-friendly order)
+
+```text
+1. Scope          — Define what the application should accomplish.
+2. Select model   — Choose a foundation model fit for the task.
+3. Customize      — Fine-tune, adapt, or augment (RAG, etc.) to meet needs.
+4. Develop        — Build and integrate the application.
+5. Deploy         — Put the solution into production use.
+6. Measure        — Evaluate outcomes and improve; loop back to scope for expansion.
+```
+
+```mermaid
+flowchart LR
+  A[Scope] --> B[Select model]
+  B --> C[Customize]
+  C --> D[Develop and integrate]
+  D --> E[Deploy]
+  E --> F[Measure and improve]
+  F --> A
+```
+
+**Exam tip:** “Put these five steps in order” style questions often mirror this lifecycle—verify against the current lens text if AWS reorders wording.
+
+## Examples
+
+**1. Pre-launch architecture review**
+
+Team runs the Generative AI Lens workbook before production Bedrock agents—security pillar surfaces guardrail and IAM gaps.
+
+**2. Cost pillar checkpoint**
+
+After launch, reviews model selection (smaller model for classification, larger for synthesis) against cost optimization questions in the lens.
+
+**3. Lifecycle ordering question**
+
+Given “deploy, scope, customize, select model, develop”—correct order starts with **scope**, ends with **measure/improve** before restarting the loop.
+
+## Limitations / edge cases
+
+- The lens **does not replace** service-specific docs (Bedrock quotas, guardrails configuration, etc.).
+- Lifecycle stages are **iterative**—real projects revisit scope and customization continuously.
+- Pillar trade-offs remain (e.g., stronger security controls vs latency/cost).
+
+## Industry scenarios
+
+**1. Healthcare startup**
+
+Uses the security and reliability pillars to document PHI handling, guardrails, and fallback when Bedrock throttles; lifecycle review before HIPAA audit.
+
+**2. Media company video GenAI**
+
+Sustainability and cost pillars drive resolution caps and batch inference; customize stage documents LoRA vs prompt-only choices.
+
+**3. Enterprise platform team**
+
+Operational excellence pillar standardizes logging for Converse API calls; measure stage defines human eval + automated grounding scores.
+
+## Key takeaways
+
+- Generative AI Lens = **best practices**, not a deployable AWS service.
+- All six **Well-Architected pillars** still apply to GenAI.
+- Know the **lifecycle order**: scope → select → customize → develop → deploy → measure/improve.
+- Review the official lens pages before the exam; ordering questions are common.
+- Course lectures cover lens topics—use the lens as a **consolidated checklist**.
+
+## References
+
+**In this repo**
+
+- [Amazon Bedrock Overview](amazon-bedrock-overview/index.md)
+- [Bedrock Guardrails](bedrock-guardrails/index.md)
+- [Evaluating RAG Performance](evaluating-rag-performance/index.md)
+- [Enterprise Integration](enterprise-integration/index.md)
+- [Quiz: Bedrock and GenAI Fundamentals](quiz-bedrock-and-genai-fundamentals/index.md)
+
+**AWS documentation**
+
+- <a href="https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html">Generative AI Lens - AWS Well-Architected Framework</a>
+- <a href="https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html">AWS Well-Architected Framework</a>
+- <a href="https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lifecycle.html">Generative AI lifecycle</a>

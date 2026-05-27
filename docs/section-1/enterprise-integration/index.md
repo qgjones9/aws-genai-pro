@@ -1,33 +1,138 @@
 # Enterprise Integration
 
-## Enterprise Integration Overview
+## What this lecture covers
 
-Alright, this seems to be as good a place as any to mention a few things that are really specific about enterprise integration that come up in the AWS training materials for this certification. They're specific enough to be suspicious, so I think you might need to know this.
+Certification-focused **enterprise integration** patterns for generative AI on AWS: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Bedrock Knowledge Bases</a> as the hub for internal documents, **cross-account** Bedrock + OpenSearch access, and **event-driven** pipelines with **SQS** (or Kafka) buffering between AWS processing and external enterprise systems.
 
-## Bedrock Knowledge Bases and External Data
+## Key definitions (from the lecture)
 
-So one thing is that, remember that Bedrock knowledge bases are basically your one-stop shop for any internal data or document management systems that you might have within your enterprise. So knowledge bases can suck in an awful lot of different information. It can take data from S3, but also from SharePoint from Atlassian, Confluence, and a whole bunch of other data data sources that might be external to AWS. So Bedrock is able to integrate this external data into your vector stores natively. So Bedrock knowledge bases, you can throw pretty Much anything at them these days, and it will index for you within Bedrock. So remember, Bedrock knowledge bases are an important tool for integrating with enterprise data.
+| Term | Definition |
+|---|---|
+| **Bedrock Knowledge Base** | Managed RAG path that ingests enterprise content into a vector store—S3 plus connectors (SharePoint, Atlassian Confluence, etc.). |
+| **Remote inference connector (OpenSearch)** | Mechanism supporting **semantic search across accounts** when the knowledge base vector store lives in another account. |
+| **Cross-account IAM role** | Role in the Bedrock account granting **invoke model** (and related) access so OpenSearch in a peer account can participate in retrieval. |
+| **Event-driven buffer** | Queue (e.g., <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html">Amazon SQS</a>) between AWS-generated events and downstream CRM/data warehouse/ticketing systems. |
 
-## Cross-Account Bedrock and OpenSearch
+## Key distinctions / comparisons
 
-Also, cross-account access comes up all the time on these exams, and I think this is no exception. One specific scenario to be aware of: what if your Bedrock Foundation model and OpenSearch for your knowledge base are in different accounts? You know, maybe you wanna share data between different accounts for Bedrock. You can do that, okay? So OpenSearch has a remote inference connector. And that supports semantic search across different accounts. So if I have a Bedrock knowledge base that's backed by OpenSearch, I can set up a remote inference connector to be able to use that OpenSearch knowledge base across different accounts for semantic search.
+| Item | Notes |
+|---|---|
+| **Knowledge base vs ad-hoc RAG** | Knowledge bases natively index many enterprise sources; exams treat them as the **one-stop** internal-doc integration story. |
+| **Same-account vs cross-account** | Cross-account needs **connector + IAM**, not connector alone. |
+| **Synchronous write vs queued write** | Direct push to enterprise apps loses data when the external system is down; **SQS/Kafka** retains events. |
+| **EventBridge + Lambda vs batch** | Lecture example uses real-time doc processing; high volume may add Batch/SQS (see section-2 vector-store update lectures). |
 
-## IAM Roles for Cross-Account Access
+## The problem (why enterprises need special patterns)
 
-Now, it's not just a matter of having that connector in place, you also need to have the appropriate IAM roles for that. So your Bedrock account that's running the model needs to have a role defined that allows invoke model access from the OpenSearch account, okay? So those are the specifics for having a Bedrock model that can access OpenSearch knowledge base from a different account. You might need to know that.
+- Corporate data lives **outside AWS** (SharePoint, Confluence, CRM, data warehouse).
+- **Account boundaries** separate security teams (Bedrock in one account, OpenSearch in another).
+- Enterprise endpoints are **less reliable** than AWS—failures should not drop AI pipeline outputs.
 
-## Event-Driven Architecture
+## The solution
 
-Another very specific thing is event driven architecture. Well, not that specific, it's just a good practice, but when you're dealing with an enterprise system, you wanna have some sort of a buffer between your AWS stuff and the enterprise stuff, right? And SQS, for example, might be a way of doing that. It could be Kafka though, or basically any pub sub system.
+### 1. Knowledge bases for internal data
 
-## Document Processing Example
+- Ingest from **S3** and **external connectors** into Bedrock-managed vector stores.
+- Position knowledge bases as the default answer for “how do we ground models on **our** documents?”
 
-So in this particular example here, I've got like the left side of the document where we're, we're doing stuff with documents with Bedrock, right? So documents are being uploaded, it's being picked up by a EventBridge that's kicking off some Lambda function that does something in bedrock with it, and then I wanna store that something within my internal data warehouse outside of AWS or my ticketing system or my CRM system.
+### 2. Cross-account Bedrock + OpenSearch
 
-## SQS as an Enterprise Buffer
+**Scenario:** Foundation model / Bedrock KB in **account A**, OpenSearch vector store in **account B**.
 
-the important point here though is that I've injected an SQS queue there in between them. So if something goes wrong with that connection, I don't lose that data. So if my ticketing system is down, my data warehouse is down, you know, maybe I don't trust these systems as much as I trust AWS, at least that's gonna be queued up in SQS or Kafka or whatever I'm using. As that sort of buffer.
+Requirements (lecture):
 
-## Relevance to Generative AI in the Enterprise
+1. OpenSearch **remote inference connector** for cross-account semantic search.
+2. IAM role on the **Bedrock account** allowing **invoke model** access **from** the OpenSearch account (exam-specific wording—verify against current docs for your deployment).
 
-So by using this event-driven architecture, I can make sure that I'm not gonna lose this data. These events are being stored somewhere and queued up in case I need to, in case something downstream goes down, okay? So that's the point of event-driven architecture and how it's relevant to generative AI solutions in the enterprise specifically. Basically, I have events that are happening when I'm generating stuff, and those events can be cached up and queued up before they actually go to my enterprise, okay? So that's the, the relevance there. Again, an oddly specific thing that isn't the exact right.
+See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-create.html">Create a knowledge base</a> and OpenSearch cross-account guidance in the latest Bedrock/OpenSearch docs.
+
+### 3. Event-driven architecture with a buffer
+
+**Reference flow from the lecture:**
+
+```text
+Documents uploaded
+    → EventBridge
+    → Lambda (Bedrock processing)
+    → SQS queue  ← buffer
+    → Enterprise ticketing / CRM / data warehouse
+```
+
+- **EventBridge** routes document events.
+- **Lambda** runs Bedrock-related transformation/enrichment.
+- **SQS** (or Kafka) ensures events **persist** if the enterprise system is unavailable.
+- Relevance to GenAI: **generation events** and artifacts can be queued before delivery to systems of record.
+
+```python
+# Illustrative: enqueue enterprise payload after Bedrock step
+import boto3, json
+
+sqs = boto3.client("sqs")
+QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/123456789012/genai-outbound"
+
+def after_bedrock_process(record):
+    sqs.send_message(
+        QueueUrl=QUEUE_URL,
+        MessageBody=json.dumps(record),
+    )
+```
+
+## Examples
+
+**1. Policy document pipeline**
+
+SharePoint → Bedrock knowledge base for employee Q&A; nightly EventBridge sync keeps vectors fresh.
+
+**2. Multi-account security boundary**
+
+Central OpenSearch cluster in a **data account**; application teams invoke Bedrock in **app accounts** via remote inference connector + cross-account roles.
+
+**3. CRM note writer**
+
+Lambda summarizes call transcripts with Bedrock; results land on **SQS**; worker pushes to Salesforce when API health checks pass.
+
+## Limitations / edge cases
+
+- Cross-account setups add **IAM and networking** review overhead—diagram the trust chain before exams or production.
+- Queues add **latency** and require **dead-letter** handling for poison messages.
+- Knowledge base connectors still need **credential management** and **sync schedules** for large corpora.
+- Not every enterprise system has a native connector—custom ingestion via S3 + Lambda remains common.
+
+## Industry scenarios
+
+**1. Global manufacturer**
+
+Confluence and SharePoint feed one knowledge base; plant engineers query procedures; SQS buffers work-order updates into on-prem MES when connectivity drops.
+
+**2. Regulated bank**
+
+Bedrock in app account; OpenSearch in data account; cross-account roles audited quarterly; no customer PII stored in prompts—guardrails downstream.
+
+**3. Retail enterprise**
+
+EventBridge on new S3 product sheets → Lambda embedding job → SQS → SAP catalog API with retry and DLQ for failed SKU writes.
+
+## Key takeaways
+
+- **Knowledge bases** integrate diverse **enterprise document** sources into Bedrock.
+- **Cross-account** OpenSearch retrieval needs **remote inference connector + IAM roles**.
+- **Event-driven design** with **SQS/Kafka** protects GenAI outputs when external systems fail.
+- Treat enterprise integration as **reliability + governance**, not only model choice.
+
+## References
+
+**In this repo**
+
+- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
+- [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md)
+- [Vector Stores and Semantic Search](vector-stores-and-semantic-search/index.md)
+- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
+- [Bedrock Guardrails](bedrock-guardrails/index.md)
+
+**AWS documentation**
+
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Retrieve data and generate responses with knowledge bases</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-data-source.html">Connect a data source to your knowledge base</a>
+- <a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html">What is Amazon EventBridge?</a>
+- <a href="https://docs.aws.amazon.com/lambda/latest/dg/welcome.html">What is AWS Lambda?</a>
+- <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html">What is Amazon SQS?</a>

@@ -1,41 +1,103 @@
 # Evaluating RAG Performance
 
-## Why Measure RAG Performance?
+## What this lecture covers
 
-So we built this big fancy retrieval augmented generated agent system knowledge base thing, right? How do I know if it's any good? So I can't improve it if I can't measure it, right? But it turns out that Bedrock has some pretty extensive ways of measuring the performance of a larger agent using retrieval augmented generation. So some things it can measure are in this list here. But first, let me talk about this little diagram on the right.
+How to measure whether a Bedrock **RAG / knowledge base / agent** system is performing well: the **RAG triad** metrics on each edge (context relevance, groundedness, answer relevance), Bedrock’s **subjective** evaluation dimensions, **ground-truth datasets**, and **LLM-as-a-judge** with optional multiple evaluator models.
 
-## The RAG Triad
+## Key definitions (from the lecture)
 
-So this is Basically the triad of retrieval augmented generation. We have a query coming in, we retrieve context from our knowledge base relevant to that query, and then we generate a response based on both the query and that context that we retrieved.
+| Term | Definition |
+|---|---|
+| **RAG triad** | Query → retrieve context → generate answer; quality is assessed along each leg and on the final answer. |
+| **Context relevance** | How relevant retrieved context is to the original query (retrieval edge). |
+| **Groundedness / faithfulness** | How well the generated answer aligns with retrieved context (generation edge). |
+| **Answer relevance / correctness** | How well the final answer addresses the original query. |
+| **Ground truth dataset** | JSON prompts plus reference “ideal” responses (and optionally reference contexts) you provide. |
+| **Reference contexts** | Optional ideal chunks that should be retrieved—needed to measure retrieval against your expectations. |
+| **LLM as a judge** | A separate foundation model scores system output against your references. |
+| **Judge / evaluation model** | FM (Llama, Claude, Nova, Mistral, etc.) running metric prompts defined by Bedrock. |
+| **Subjective metrics** | Correctness, completeness, helpfulness, logical coherence, faithfulness, citation precision/coverage, harm, stereotyping, refusal/evasiveness—scored via judge prompts, not only pure math. |
 
-## Metrics Along Each Edge
+## Key distinctions / comparisons
 
-Now, along each of these edges, there are things we can measure. So as we're retrieving context for a query, we can measure how relevant that context is to the original query, very important. As we're generating a response, we can measure how grounded that response is to the context that we retrieved. And finally, we can measure the relevance of the answer that we produced to the original query.
+| Item | Notes |
+|---|---|
+| **Mathematical metrics vs Bedrock subjective metrics** | Lecture points to deeper math in a separate AI engineering course; Bedrock focuses on FM-judged scores. |
+| **With vs without reference contexts** | Responses-only ground truth still works for some metrics; measuring retrieval fidelity needs reference contexts. |
+| **Single judge vs multiple judges** | Different models score differently; multiple judges can check agreement. |
+| **Generator model vs judge model** | One FM produces RAG answers; another FM evaluates them—separate roles. |
 
-## Bedrock's Subjective Metrics
+## The problem (why you need it)
 
-Now, there are mathematical ways of measuring all this stuff, and I get into that in more depth in my larger AI engineering course, but Bedrock has some more subjective ways of measuring this stuff. So we can measure correctness, how accurate am I in answering the original question? That's kind of the answer relevance there. How complete is my answer? How helpful is my answer? How logically coherent is my answer? How faithful is it? How well are the responses aligning with the retrieved context? That's kind of what we're calling groundedness here in this diagram.
+- You cannot improve a RAG system you do not measure.
+- Human-only review does not scale for iterative chunking, retrieval, and prompt changes.
+- Subjective qualities (helpfulness, harm) still need a repeatable evaluation loop.
 
-If I have citations, how precise are those citations and how well are they covering what was retrieved? Am I producing harmful results? Am I doing any stereotyping I might want to try to avoid from this information? Are there, like, you know, hidden biases in the context that I'm retrieving that I need to deal with? Is it refusing to a answer things at all? You know, is it being evasive when answering questions it doesn't know about? These are all things that Bedrock can help you measure.
+## The solution
 
-## Providing Ground Truth
+Bedrock evaluation workflow:
 
-And you might say, "Well, a lot of that sounds subjective. Helpfulness, you know, like how do I know if it's helpful or not?" Well, yeah, you have to provide a ground truth of what you consider to be good responses. So the way this all works is that you provide it with a data set of sample prompts and also a reference set of what a good response to that prompt would look like to you, and also what good contexts would be retrieved for that prompt as well.
+1. Map failures to the **triad**: bad retrieval, ungrounded generation, or irrelevant answers.
+2. Build a **JSON dataset** of sample prompts + reference responses (+ optional reference contexts).
+3. Run Bedrock evaluation using an **LLM judge** that compares system outputs to your references.
+4. Track metrics (correctness, completeness, helpfulness, coherence, faithfulness, citations, safety, bias, refusal behavior).
+5. Iterate on chunking, retrieval, models, or guardrails based on scores.
 
-So you're basically giving it your own subjective evaluation of, "For these prompts, this is the ideal outcome, this is the ideal context, this is the ideal response that I would get." And then the Bedrock evaluation system can use that to measure how close it is. So you give it in JSON format that prompt data set with both the prompts and reference responses. Reference contexts are optional, okay? So if you wanna be able to measure ground truth from your knowledge base, you need that.
+## How to apply it
 
-## LLM as a Judge
+Illustrative ground-truth record shape (from lecture description):
 
-And then the trick is that Bedrock will use another LLM, another foundation model, as a judge. So it will say, okay here's the prompt, here's what I produced, here's what the system produced, how well does that match up with the reference responses and contexts? And the evaluation model, the judge model, if you will, will decide how good it was. So this is what we call LLM as a judge, and we'll talk about this a little bit more later on as well.
+```json
+{
+  "prompts": [
+    {
+      "prompt": "What is our return policy for annual subscriptions?",
+      "referenceResponse": "Annual subscriptions may be refunded within 30 days of purchase...",
+      "referenceContexts": [
+        "Section 4.2: Annual plans include a 30-day refund window..."
+      ]
+    }
+  ]
+}
+```
 
-## Judge Models and Multiple Evaluators
+- **referenceContexts** optional but required to judge whether the KB retrieved the right passages.
+- Bedrock runs a **judge model** with metric-specific prompts (example in docs: Nova Pro **context relevance** prompt scoring **no / maybe / yes** with explanation).
 
-So you have this other model, maybe it's Llama, Claude, Nova, or Mistral, and the specific metrics that we're going to measure are defined within prompts to that model. So we got one model that's generating your response from this rag system, from the knowledge base. We have another model that's judging how well it's doing. And different models will do that scoring in different ways. So maybe you want multiple judges, you know, you have multiple mod-models evaluating this, and you can see if they agree with each other if you really wanna get fancy.
+You do not need to memorize judge prompt wording for the exam—understand the **pattern**.
 
-## Context Relevance Prompt Example
+## Examples
 
-Now, how this works in specifics, I wouldn't worry about that for the exam, but just to give you an example to wrap your head around, here is the documented prompt for measuring context relevance with the Nova Pro model from Amazon. So if you wanna read through that, you can kinda get an idea of how these LLMs as a judge work and how they evaluate whether a given response matches up with the desired output. And in this case, it's just gonna score it as no, maybe, or yes, alright? So the output is specified as explaining the response and giving a final answer of no, maybe, or yes, just giving you the format that it wants to get back and how it will arrive at that answer.
+- **Context relevance (Nova Pro prompt example)**: Documented judge prompt asks whether retrieved context matches the query; output format `no | maybe | yes` plus rationale—illustrates LLM-as-judge mechanics.
+- **Faithfulness check**: Answer claims a refund window not present in retrieved chunks → low faithfulness/groundedness score.
+- **Multiple judges**: Claude and Llama both score helpfulness; disagreement flags metric instability.
 
-## Subjective but Actionable Metrics
+## Limitations / edge cases
 
-So it's it is subjective to some extent, you know, we're using these fancy foundation models to do that evaluation, but still, it gives you a metric that you can use and try to improve upon that should measure how well your rag system is performing.
+- Metrics like **helpfulness** are subjective—even with references, judgments depend on judge FM behavior.
+- Exam: understand **triad**, **ground truth JSON**, **LLM judge**, optional **reference contexts**—not internal judge prompt templates.
+- Mathematical evaluation approaches exist but are outside this lecture’s Bedrock-focused scope.
+
+## Key takeaways
+
+- Measure along the **RAG triad**: context relevance, groundedness, answer relevance.
+- Bedrock adds rich **subjective** dimensions (safety, bias, citations, refusal, etc.).
+- Supply **ground truth** prompts + ideal responses (+ optional ideal contexts).
+- **LLM-as-a-judge** compares system output to your references using another FM.
+- Different **judge models** score differently; multiple judges optional for rigor.
+- Scores are somewhat subjective but still **actionable** for improvement loops.
+
+## Industry scenarios
+
+1. **Customer support bot QA**: Curators label 200 real tickets with ideal answers and source paragraphs; weekly Bedrock evaluation runs before promoting new chunk sizes to production.
+2. **Compliance review**: Faithfulness and citation precision metrics gate releases when answers must only use retrieved policy text.
+3. **Safety gate**: Harm and stereotyping scores monitored after KB updates ingest new third-party articles—judge model flags regressions before users see them.
+
+## References
+
+- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
+- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
+- [Optimizing your Vector Store and Embeddings](optimizing-your-vector-store-and-embeddings/index.md)
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-evaluate.html">Evaluate the performance of RAG sources</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-evaluation.html">Evaluate the performance of models</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Knowledge bases</a>

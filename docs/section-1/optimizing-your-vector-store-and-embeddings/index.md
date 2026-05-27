@@ -1,45 +1,123 @@
 # Optimizing your Vector Store and Embeddings
 
-## Chunking vs embedding vector optimization
+## What this lecture covers
 
-Alright, so we saw that your chunking strategy is one way to optimize the retrieval phase from your knowledge base or retrieval augmented generation system. Another is optimizing the actual sizes of those embedding vectors themselves. So if you recall, those embedding vectors that we're translating our chunks of text into kinda sorta represent the meaning of those chunks of text. More specifically, how close those vectors are to each other represents how semantically similar these bits of text are to each other.
+Beyond chunking, optimize RAG retrieval by tuning **embedding vector size**, understanding **sparse vs dense** embeddings and **similarity** (especially **cosine similarity**), attaching **metadata** for hybrid retrieval and re-ranking, and keeping knowledge bases **fresh** with event-driven ingestion patterns.
 
-So you need to kinda figure out how big do those vectors really need to be? If it's too big, you're wasting space and you're spending money storing more information than you need to and sending more data across the wire than is necessary, right? If the vectors are too small, then you're gonna lose some of that important meaning, some of that important information, and it will affect the quality of your retrieval. So smaller vectors will mean fewer dimensions per chunk, and it will cost you less to store and process that data, but there's gonna be a trade-off with your retrieval performance there as well.
+## Key definitions (from the lecture)
 
-## Titan dimensions and chunk size
+| Term | Definition |
+|---|---|
+| **Embedding vector** | Numeric representation of a text chunk’s meaning; closeness in vector space ≈ semantic similarity. |
+| **Vector dimension** | Number of dimensions per embedding; larger can capture nuance, smaller saves storage and wire cost. |
+| **Sparse embedding** | Mostly empty vector (e.g. one-hot animal categories); high similarity contrast but wasted space. |
+| **Dense embedding** | Floating-point dimensions packing semantic meaning—standard in generative AI RAG. |
+| **Similarity factor** | Metric for how close two vectors are (lecture highlights **cosine similarity**). |
+| **Cosine similarity** | Cosine of angle between vectors; identical → 1, orthogonal/unrelated → 0; smooth for math use. |
+| **Metadata** | Non-content fields attached per chunk (via `metadata.json`); not chunked as body text. |
+| **Hybrid search** | Combine semantic vector distance with metadata filters or scoring. |
+| **Re-ranking** | Using metadata (among other signals) to reorder retrieval results—covered later in the course. |
+| **Ground truth (evaluation)** | Optional reference contexts/responses for measuring retrieval quality. |
 
-Now, Titan has a default of one thousand twenty-four or more dimensions, I've seen it cited as ten twenty-four or fifteen thirty-six, maybe it's changing, but it's a lot, right? So if you're storing a chunk of like three hundred characters, you might actually be spending more money storing that embedding vector than the actual chunk of data. So ask yourself, you know, what's the size of my chunks? First of all, do I really need that much information to encode what it means? And it might have to do with the, the domain that you're dealing with as well.
+## Key distinctions / comparisons
 
-So depending on what kind of data you're storing, maybe it's pretty straightforward stuff, you know, there aren't a whole lot of categories of things that might be similar to each other. In that case, maybe you can get away with a smaller dimension size than a larger one. So if the semantic concepts you're searching for are complex, you might benefit from larger vector sizes in your embeddings, but if not Maybe you can experiment with smaller ones and save a few bucks.
+| Item | Notes |
+|---|---|
+| **Chunking vs embedding size optimization** | Chunking shapes what is retrieved; dimension count shapes how meaning is encoded and stored. |
+| **Too large vs too small vectors** | Oversized wastes money/bandwidth; undersized hurts retrieval quality. |
+| **Sparse vs dense** | Sparse common in recommenders with strong similarity signals; dense efficient for GenAI vector stores. |
+| **Semantic search vs metadata tuning** | Vectors find candidates; metadata can refine or re-rank (hybrid). |
+| **Lambda per S3 event vs batched ingest** | Concept: trigger updates on change; practice should batch to avoid hammering `StartIngestionJob`. |
 
-## Sparse vs dense embeddings
+## The problem (why you need it)
 
-What do I mean by sparse and dense embeddings? So, this term's kind of used in different ways, but technically a sparse vector is one that's mostly empty, that's why it's sparse. An example is one-hot encoding. So, say I have a vector that represents what kind of an animal something is. Maybe I have a dimension for every animal I know about, and I just have a one in the one that's actually correct and a zero in all the other ones, right? A very extreme example there, but, you know, a vector representing a chicken, I just have a one in the chicken dimension and a zero in the squid dimension, and so on and so forth. And a bonobo would have a one in the bonobo dimension but a zero in the lemur dimension, right? So that's an example of a sparse vector. Very similar, but obviously there's a lot of wasted space there, and that's a problem.
+- Default **Titan** dimensions (~1024–1536 cited) may cost more to store than a **300-character** chunk of source text.
+- Wrong vector size for a simple domain wastes money; too small a dimension loses meaning for complex domains.
+- Stale indexes produce outdated answers; unbatched ingestion triggers can overwhelm Bedrock ingest APIs.
 
-## Dense embeddings in generative AI
+## The solution
 
-What you see almost all the time, like I've never seen anything but this personally, is a dense embedding. So in the context of generative AI, typically we have these floating point dimensions where, taken together, these dimensions represent a vector in multi-multi dimensional space that represents the semantic meaning of that chunk of data. This is generally what you use. Now, these can be smaller because there's not a lot of wasted space, it's really packing that information in there, right? That's why we call it a dense embedding.
+**Optimization levers:**
 
-## Sparse vs dense trade-offs
+1. Match **embedding dimensions** to domain complexity and chunk size.
+2. Use **dense** embeddings for typical Bedrock RAG; understand sparse mainly for contrast/recommender patterns.
+3. Measure relatedness with **cosine similarity** (common in vector search).
+4. Supply **metadata.json** per chunk for hybrid retrieval, access control, citations, lineage.
+5. Refresh KB on new/changed content via **S3 events → Lambda → ingestion job**, preferably **batched** (AWS Batch / EventBridge queuing mentioned as better than per-second triggers).
 
-Now, there's a trade-off here. A sparse vector is going to give you bigger similarity factors, so you see these used a lot in recommender systems, where we're trying to say, okay, here's the stuff this person bought, here's the stuff this other person bought, how similar are they? And you can get some really clean similarity metrics using those sparse vectors, but dense vectors are gonna be a lot more efficient, both in memory and in general. Now, there are ways to compress sparse vectors, and we see that in recommender systems, kind of hard to do that on a GPU though, so you know, you don't see that as much. In generative AI.
+## How to apply it
 
-## Similarity factors and cosine similarity
+### Metadata sidecar (concept)
 
-Wait, what's a similarity factor? What do I talk about there? So a similarity factor is just some measure of how close those vectors are. So we've talked about, you know, embeddings kind of being close to each other represent, representing two things having a similar meaning. How do we actually measure that? Well, that's what a similarity factor is. And a very common one is the cosine similarity factor. All it is is the cosine between those two vectors. And you can do that in multidimensional space, it doesn't have to be just x and y, the map is the same. And if you remember your trigonometry from high school, the cosine is related to the angle between Between the two vectors. And it's set up in such a way that if two vectors are the same, you end up with a cosine of one, and they're totally different, then it's a cosine of zero. So it is basically a measure of how close those vectors are to each other in that embedding space. The other nice thing is that cosine has a nice smoothness to it, so it doesn't just have these sharp points, you know, these discontinuities. you know, it has a smooth up and down motion, which makes it a little bit more useful from a mathematical standpoint too. Cosine similarity, remember that one?
+```json
+{
+  "metadataAttributes": {
+    "section": "introduction",
+    "topic": "biology",
+    "keywords": ["chicken", "domesticated bird", "meat", "eggs"]
+  }
+}
+```
 
-## Embedding metadata
+Associate metadata with a chunk whose text is: *“A chicken is a domesticated bird commonly raised for meat and eggs.”* Hybrid retrieval can combine vector distance with metadata relevance.
 
-Also, another way to optimize your retrieval is by embedding metadata along with your embedding vectors as well. So you can feed more than just the raw text of the chunk into a knowledge base and get back these embedding vectors in your vector store. you know, typically you'll store both the chunk itself and its embedding vectors so you can look up those chunks by their embeddings, right? But you can also pass in metadata, and this is important. So if you pass in a metadata dot JSON file to your knowledge base when you're creating it, you can specify additional metadata with each chunk. And because it's being flagged as metadata and not a content column the knowledge base will know not to try to chunk that up. You know, that's just gonna be metadata that's attached to each chunk.
+### Cosine similarity (illustrative)
 
-## Chicken book metadata example
+```python
+import numpy as np
 
-As an example, let's say I have a book about chickens, getting back to chickens. So I can have a passage from the introduction of that book that says, "A chicken is a domesticated bird commonly raised for meat and eggs." And I might have some metadata associated with that chunk. It's from the introduction section, the book is about biology, and it hits these keywords about chicken, domesticated bird, meat, eggs. so that can all be associated with that chunk. And that can let me do sort of a hybrid approach when I'm searching for that chunk of data in my vector data store. So when I'm looking that up from the, the vector embedding, I can start initially with that semantic similarity, the distance between those embedding vectors, but then I can use that metadata maybe to fine-tune those results, maybe to re-rank those results based on how relevant the metadata for that chunk is to the profits coming in. That's called re-ranking. We'll talk about that in a little bit more detail later on in the course. But the idea here that I want you to take home is I can actually attach metadata To my chunks in addition to the embedding vectors themselves, and I can use that metadata to optimize re-my retrieval even further.
+def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
+    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
 
-## Other metadata examples
+# Values near 1.0 → more similar meanings in embedding space
+```
 
-And other examples of metadata you might include the original document ID, like let me go back and get the original source document, do something with that, the category of this information, it could be access control information, you know, maybe I want to use that to make sure that this information isn't being used in certain scenarios, right? The data lineage of where this came from, maybe I need to document that. for example, in my citations. So if I have a chunk of data, I can attach metadata saying where that data came from. Maybe I can cite that in my final response for the system or any additional context you want to attach to this chunk of text. So you can see metadata can be very important in your vector store. You can have more than just the embedding vector and the actual raw text. You can have information surrounding that as well that can be retrieved along with it to approve your retrieval. Further And the chicken approves.
+### Keeping KB fresh (conceptual pipeline)
 
-## Keeping your knowledge base up to date
+```
+S3 object created/changed
+    → Event notification
+    → Lambda (enqueue work, do not spam StartIngestionJob per second)
+    → Batch / scheduled job → Bedrock knowledge base ingestion sync
+```
 
-Quick note on keeping your knowledge base up to date. So how do you make sure it's not stale? That's also important for getting good results out of it, right? So one general idea is that if you have new or changed content, maybe there's some sort of an event trigger, like an S3 event, that can kick off a Lambda function, which in turn can kick off a batch update to your knowledge base, right? So maybe that Lambda function can kick off a new event stream And you can batch generate them for even greater efficiency. So the diagram here is probably not something you really want to do in practice. The idea is sound, but what's gonna happen is if, if you have a lot of updates happening in S3 and that lambda function gets triggered a lot, you don't wanna be calling StartIngestionJob on Bedrock over and over and over again every second, right? I mean, that's gonna back up really, really fast. it would be better to batch that up using something like AWS Batch and maybe EventBridge as well on top of that to queue that up and do it more infrequently. But conceptually, you will be expected to understand that you might want to use a lambda function to kick off updates to your knowledge base, and we'll get into some more fancy ways of doing that later.
+See [section-2 re-ranker content](../../section-2/43-re-ranker-modules-in-bedrock/index.md) when you add post-retrieval re-ranking.
+
+## Examples
+
+- **Chicken book chunk**: Text chunk plus metadata (`introduction`, `biology`, keywords) enables hybrid search and later re-ranking.
+- **Metadata use cases**: Document ID, category, **access control**, **data lineage** for citations, any extra context stored alongside vectors.
+- **Titan dimension trade-off**: Simple categorization domain might experiment with smaller dimensions; complex semantic domains may need larger vectors.
+- **Stale content**: New PDF in S3 triggers update pipeline instead of manual re-upload only.
+
+## Limitations / edge cases
+
+- Titan default dimension counts may change; lecture cites **1024** and **1536** as seen in the wild.
+- Sparse vector compression on GPU is hard—sparse less common in GenAI GPU paths.
+- Diagram with Lambda firing ingest on every S3 change is **conceptually sound** but **not ideal at high churn** without batching.
+- Re-ranking details deferred to a later lecture.
+
+## Key takeaways
+
+- Tune **embedding vector dimensions** against chunk size, domain complexity, cost, and retrieval quality.
+- **Dense embeddings** dominate GenAI; **sparse** illustrates similarity contrast but wastes space.
+- **Cosine similarity** measures vector closeness smoothly (1 = same direction, 0 = unrelated in lecture framing).
+- **metadata.json** adds per-chunk fields for hybrid search, security, citations, and lineage—not chunked as body text.
+- Keep KBs current with **event-driven ingestion**, but **batch** updates in real deployments.
+- The chicken approves (lecture humor on metadata value).
+
+## Industry scenarios
+
+1. **Multi-tenant SaaS docs**: Metadata includes `tenant_id` and `clearance_level`; hybrid retrieval filters vectors so customers never see each other’s chunks.
+2. **Regulated citations**: Lineage metadata maps chunks to source PDF page; answers include auditable references in finance or healthcare assistants.
+3. **Cost tuning for catalog search**: Retail product descriptions use smaller embedding dimensions after A/B tests show no retrieval regression versus 1536-dim defaults.
+
+## References
+
+- [Vector Stores and Semantic Search](vector-stores-and-semantic-search/index.md)
+- [Managing Chunking Strategies with Bedrock](managing-chunking-strategies-with-bedrock/index.md)
+- [Pre-Retrieval and Chunking Strategies](pre-retrieval-and-chunking-strategies/index.md)
+- [Evaluating RAG Performance](evaluating-rag-performance/index.md)
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html">Amazon Titan Text Embeddings</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-metadata.html">Include metadata in a knowledge base</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_StartIngestionJob.html">StartIngestionJob</a>

@@ -1,57 +1,131 @@
 # Bedrock Guardrails
 
-## Bedrock Guardrails Overview
+## Lecture notes
 
-Let's talk about Amazon Bedrock guardrails, a very important feature for AI safety and governance and security and all that good stuff.
+### What this lecture covers
 
-## Prompt and Response Filtering
+<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-how.html">Amazon Bedrock Guardrails</a> are a core feature for **AI safety, governance, and security**. They provide **content filtering on both prompts and responses** for anything flowing through Bedrock—knowledge bases, agents, or other applications—so you control what users can send in and what the system can send back out.
 
-Basically, it provides content filtering for both your prompts and your responses. So for anything coming in or out of your Bedrock system, whether it's a knowledge base or an agent or whatever it is, a guardrail can make sure that people aren't saying things you don't want them to say going into the system, and you're also filtering out the response from the system to make sure that it's not saying anything you don't want it to say. Say.
+### Key definitions (from the lecture)
 
-## Supported Models
+| Term | Definition |
+|---|---|
+| **Guardrail** | A Bedrock policy that evaluates **inputs and outputs** and blocks, masks, or filters content that violates your rules. |
+| **Prompt filtering** | Checking user input **before** it reaches the model (topics, words, PII, attacks, harmful content). |
+| **Response filtering** | Checking model output **before** it reaches the user (same policy dimensions on the outbound side). |
+| **Word filter** | Block or detect specific **words** (built-in profanity list plus custom words). |
+| **Topic filter** | Block or detect entire **topics** (e.g., religion, politics, competitors) you define. |
+| **Objectionable content dimensions** | Built-in categories (e.g., hate, bias) with configurable **severity thresholds**. |
+| **PII handling** | Automatically **remove** or **mask** personally identifiable information (phone, SSN, address, etc.). |
+| **Contextual grounding check** | A guardrail feature that scores whether a response is **grounded in retrieved context** and **relevant to the query**, to help catch hallucinations. |
+| **Grounding score** | How similar the response is to **contextual data** retrieved (e.g., from a vector store in RAG). |
+| **Relevance score** | How relevant the response is to the **original user query**. |
+| **Blocked message response** | The message shown to users when content is filtered (configurable). |
 
-This works with the text foundation models currently, you know, like Titan or Claude and whatnot currently not with image models, but maybe that will change in the not too distant future.
+### Key distinctions / comparisons
 
-## Word and Topic Filtering
+| Item | Notes |
+|---|---|
+| **Word vs topic filtering** | **Words** match explicit terms; **topics** use definitions and examples to catch broader subject matter (e.g., “politics”). |
+| **Block vs mask (PII)** | **Block** stops the request/response; **mask** replaces sensitive values (e.g., `[ADDRESS]`) so the interaction can continue. |
+| **Grounding vs relevance** | **Grounding** compares the answer to **retrieved documents**; **relevance** compares the answer to the **user’s question**. |
+| **Guardrails vs token-level redaction** | Guardrails are rich and managed in Bedrock; [Token-Level Redaction](../token-level-redaction/index.md) is a simpler, custom **word-level** filter layer you can add around endpoints. |
 
-You can filter on the word level or the topic level. So if there's a set of things you just don't want people to talk about, you can specify either the topics, like maybe you don't want them to talk about religion or politics or whatever it might be, or maybe you don't want them to mention your competitors, I don't know, but you can set that all up.
+### The problem (why you need guardrails)
 
-## Objectionable Content Dimensions
+- Generative apps can accept **unsafe prompts** (jailbreaks, hate speech, policy violations) or emit **unsafe or wrong responses**.
+- Without governance, you risk **brand damage**, **compliance failures**, and **PII leakage**.
+- RAG systems can **hallucinate** beyond retrieved documents; you need a way to **detect** answers that are not grounded in your data.
 
-You can also have it automatically filter out words and topics just based on how objectionable it might be. So there are various dimensions you know, for things that are hateful Or biased or whatever it might be, and you'll, you'll see some of those when we do a demo in a minute here.
+### The solution
 
-## Profanity Filter
+- Attach a **guardrail** to Bedrock usage (including [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md) and agents) so **every prompt and response** is evaluated.
+- Combine **harmful-content filters**, **denied topics**, **word lists**, **profanity**, **PII policies**, and optional **contextual grounding** thresholds.
+- Configure a **blocked message** so users get a clear, controlled response when content is filtered.
+- Tune thresholds knowing you may need to balance **safety vs false positives** (especially for grounding and prompt-attack filters).
 
-Of course, it has a profanity filter as well that you can select, and it won't make you type all those in yourself. It knows what the dirty words are, you just have to turn that on.
+### Supported models and integration
 
-## PII Removal and Masking
+- Guardrails work with **text foundation models** today (e.g., Titan, Claude)—**not image models** in the lecture’s timeframe (may change later).
+- Can be incorporated into **agents** and **knowledge bases**; guardrails apply automatically to attached resources.
+- Also usable via APIs such as <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-use.html">InvokeModel, Converse, and ApplyGuardrail</a> (see [More Depth on the Bedrock Converse API](../more-depth-on-the-bedrock-converse-api/index.md)).
 
-And it can also remove personally identifiable information automatically. So if it sees anybody's phone number or social security number or driver's ID number or address or whatever it might be, you can select what kinds of PII you want to remove, or, or you might want to mask that out. So optionally, you can just have it overlaid with sort of an in-brackets address if you don't wanna print anybody's address out. So If you want to make sure that you're not leaking any PII out of your system, that's a very good feature to use when you're putting a guardrail on the responses from your Bedrock system.
+### Contextual grounding check (anti-hallucination)
 
-## Contextual Grounding Check
+When RAG retrieves context from a vector store, contextual grounding check measures:
 
-A newer feature is contextual grounding check in Bedrock guardrails. This is pretty cool. Its intent is to help prevent hallucinations. So it measures two things, and you can have thresholds on these two different metrics beyond which it will filter out the result.
+1. **Grounding** — Is the response aligned with the **retrieved “ground truth”** chunks? Low grounding suggests the model invented facts not present in your documents.
+2. **Relevance** — Is the response **on-topic** for the original query?
 
-## Grounding Metric
+You set **thresholds**; responses below them can be **blocked** or **detected**. See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-contextual-grounding-check.html">contextual grounding check</a>.
 
-One is called grounding. That's basically how similar is the response to the contextual data I received. So if you think back to how knowledge bases And retrieval augmented generation worked We're going off and retrieving some contextual data from a vector database, right? And that will measure how similar is the response to that sort of ground truth data that we retrieved from the vector store. If it went off and made stuff up that wasn't in that vector store and that documents that you actually provided to the system, you'll have a low grounding score, and you can set a threshold that says, okay, if the response here didn't wasn't really based on what came out of the documents that I gave it, and it's kind of went off and made up its own thing based on its earlier training, maybe I want to filter that out, right? So that's what contextual grounding check does.
+```
+User query → retrieve chunks → LLM answer
+                    │                │
+                    └──── grounding score (answer vs chunks)
+                         relevance score (answer vs query)
+```
 
-## Relevance Metric
+### Limitations / edge cases
 
-It can also measure the relevance of the response to the original query. So if it sees that the answer it gave isn't really relevant to what the original question was, you can also use the contextual grounding check to filter that out as well. So it's sort of a way to at least guess as to whether or not the answer you got is relevant and correct based on the data that you gave it.
+- **Grounding quality depends on retrieval** — If your vector store returns irrelevant chunks, grounding metrics are less meaningful.
+- **Not perfect metrics** — Treat thresholds as **tuning knobs**, not guarantees of factual correctness.
+- **Multimodal harmful content** — The hands-on lecture notes newer **text + image** harmful-category checks; model support evolves over time.
+- **False positives** — Aggressive prompt-attack or grounding settings can block legitimate queries (often **off by default** for that reason).
 
-## Grounding Limitations
+### Examples
 
-These aren't perfect metrics, by the way. So obviously, grounding metrics are only gonna be as good as the structure that you're storing in your vector store. So if your vector store has a problem where it tends to retrieve irrelevant information this metric won't work. Work as well, but it's there if you want it.
+**1. Customer-support chatbot**
 
-## Agents and Knowledge Bases
+Block **competitor names** and **profanity** on input; **mask SSN and credit-card patterns** on output before agents see responses in the CRM.
 
-And this can be incorporated into either agents or knowledge bases, so in both cases you can attach a guardrail to those systems and it will automatically be applied to all prompts and responses.
+**2. Internal HR policy assistant (RAG)**
 
-## Blocked Message Response
+Attach grounding check so answers with **low grounding** against policy PDF chunks are blocked with: “I can only answer from official policy documents.”
 
-You can also configure the blocked message response so that when it does choose to filter something out, you can control the message that the user sees when that happens.
+**3. Public-facing marketing bot**
 
-## Hands-On Demo
+Use **denied topics** for politics and religion; set **hate/bias** filters to high; customize blocked message to match brand voice.
 
-This will make more sense when we see an example, so let's go hands-on and create a guardrail in Amazon Bedrock.
+### Industry scenarios
+
+**1. Regulated healthcare portal**
+
+A hospital wires guardrails to **mask PHI** on responses and block **medical advice** topics outside approved content, reducing accidental disclosure in a Bedrock-powered triage bot.
+
+**2. Financial services wealth assistant**
+
+The firm denies **investment recommendations** as a topic, enables **PII masking**, and uses **contextual grounding** on filings retrieved from a knowledge base so answers stay tied to SEC documents.
+
+**3. Enterprise software documentation bot**
+
+Product docs are ingested via RAG; grounding thresholds drop answers that cite **features not in retrieved release notes**, while relevance filtering catches answers that drift from the user’s specific API question.
+
+### Key takeaways
+
+- Guardrails filter **both prompts and responses** across Bedrock applications.
+- You can filter by **words, topics, objectionable categories, profanity, and PII** (block or mask).
+- **Contextual grounding check** adds **grounding** and **relevance** scores to reduce RAG hallucinations—quality still depends on good retrieval.
+- Attach guardrails to **agents and knowledge bases**; configure **blocked messages** for filtered interactions.
+- Pair guardrails with simpler [Token-Level Redaction](../token-level-redaction/index.md) when you want defense in depth.
+- See [Hands-On with Bedrock Guardrails](../hands-on-with-bedrock-guardrails/index.md) for console setup and testing.
+
+### References
+
+**In this repo**
+
+- [Hands-On with Bedrock Guardrails](../hands-on-with-bedrock-guardrails/index.md)
+- [Bedrock Guardrails Automated Reasoning Checks](../bedrock-guardrails-automated-reasoning-checks/index.md)
+- [Token-Level Redaction](../token-level-redaction/index.md)
+- [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md)
+- [Retrieval-Augmented Generation (RAG)](../retrieval-augmented-generation-rag/index.md)
+- [More Depth on the Bedrock Converse API](../more-depth-on-the-bedrock-converse-api/index.md)
+
+**AWS documentation**
+
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-how.html">How Amazon Bedrock Guardrails works</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-components.html">Create your guardrail</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-contextual-grounding-check.html">Use contextual grounding check to filter hallucinations</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-sensitive-filters.html">Remove PII with sensitive information filters</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-prompt-attack.html">Detect prompt attacks</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-use.html">Use cases for Amazon Bedrock Guardrails</a>

@@ -1,31 +1,126 @@
 # Types of Prompts
 
-## Three Types of Prompts
+## What this lecture covers
 
-There are three types of prompts you should definitely know about that Amazon covers and this isn't just an Amazon thing, these are pretty widely recognized.
+Three widely used prompting patterns—**zero-shot**, **few-shot**, and **chain-of-thought (CoT)**—including when each fits, how few-shot teaches **format** as well as **task**, and how CoT combines “think step by step” with **explicit step guidance** (quadratic formula example).
 
-## Zero-Shot Prompting
+## Key definitions (from the lecture)
 
-One is the zero-shot prompt, and this is a prompt where no examples are given. So in the previous lesson, we gave an example of where we gave it some cases to go by of what sentiment analysis should look like. We gave it an example of a positive and a negative sentiment and how to label that. You don't need to do that though all the time, so if you have enough information in the training of the model itself Sometimes you don't need to give examples at all. You can just say, "Classify this as positive or negative sentiment," and it will just go off and do it. So that just relies on the model being large enough to have enough training information to know what you want, to actually understand what you're asking for without any explicitly given examples handed to it.
+| Term | Definition |
+|---|---|
+| **Zero-shot prompting** | No in-prompt examples; the model relies on prior training to interpret the task (e.g., “Determine the sentiment of the following sentence” with no labeled samples). |
+| **Few-shot prompting** | One or more input→output examples in the prompt; more examples steer classification **and** response format. |
+| **Chain-of-thought prompting** | Instructing the model to reason in steps—often “think step by step”—sometimes plus enumerated substeps you define. |
 
-Again, sentiment analysis being the example I want to use for that one. You could just say, "Determine the sentiment of the following sentence," and not give it any ex-any examples. That would be an example of zero-shot prompting.
+## Key distinctions / comparisons
 
-## Few-Shot Prompting
+| Item | Notes |
+|---|---|
+| **Zero-shot vs few-shot** | Zero-shot when the model already “knows” the task from training; few-shot when you need custom labels, niche domains, or strict output shape. |
+| **Implicit vs explicit CoT** | “Think step by step” alone vs listing substeps (standard form → identify coefficients → apply formula)—explicit guidance reduces bad decompositions. |
+| **Classification vs procedure** | Sentiment is a classic few-shot/zero-shot task; multi-step math benefits from CoT with named stages. |
 
-However, few-shot prompting is the opposite of that, where you do give it some examples. So in a few-shot example, you could give it some examples of the desired responses to given prompts. So you could say, "Again, determine the sentiment of the following sentence using these examples. I had a great time at the park today should be positive. That restaurant had terrible service should be negative." Give it as many as you want. The more you give it, the more you'll sort of train the system as to both examples of what you consider to be positive and negative sentiment and also what the output should be. So it's not only learning how to classify things through these examples that you're giving it, it's also learning the format that you want the response in, in this case positive or negative.
+## The problem (why prompt type matters)
 
-## Chain of Thought
+- Some tasks are **under-specified** in zero-shot (unusual labels, proprietary schemas).
+- Large compound problems fail when the model tries to **jump to the answer** without intermediate structure.
+- Without examples, the model may return **prose** when you need **tokens** like `positive` / `negative`.
 
-Finally, there's chain of thought, and I mentioned this again in the previous slide too. If you tell it to think step by step, you can get it to try to break things down, break down larger problems into their subtasks. So an example would be, describe how to solve a quadratic equation using the quadratic formula. Think step by step, starting with the standard form of a quadratic equation, identifying the coefficients, and then applying the quadratic formula. Make sure to include an example equation and solve it.
+## The solution: choose the right pattern
 
-## Think Step by Step
+### Zero-shot
 
-So we've done a couple of things here. First of all, we said Think step by step. That's telling it to break this down into a few subtasks, so don't try to tackle this problem all at once. I'm forcing you to go back and break it down into some specific subtasks here, and often that can result in a better result and one that's more explainable as well.
+Use when training likely covered the task:
 
-## Explicit Step Guidance
+```text
+Determine the sentiment of the following sentence:
+"The keynote exceeded our expectations."
+```
 
-I've also told it explicitly what to do, so I'm not trusting it to do that reasoning by itself on how to break down the solving of a quadratic equation. I'm giving it explicit guidance on what those steps should be. So I'm saying, start with the standard form of a quadratic equation, so it can go off and retrieve that from its training data. Then identify the coefficients, it tried to figure that out on its own, maybe it needs to write its own code to figure that out, I don't know, and then actually apply the quadratic formula. Again, it might go off and write some Python code to figure that out, but we've given it guidance on how to break this complicated problem down into more straightforward subtasks,
+Works when the model is **large enough** and the task is **common** (e.g., generic sentiment).
 
-## Example Output
+### Few-shot
 
-and this is what the output of that might end up looking like in the real world. I think this is an actual capture that I did. So here's an example of where it actually took that example and broke it down like I said and actually solved it for the specific problem. It might have a harder time doing that if I didn't tell it to think step by step.
+Supply examples that teach **both** meaning and format:
+
+```text
+Determine the sentiment of the following sentence using these examples:
+"I had a great time at the park today" → positive
+"That restaurant had terrible service" → negative
+
+"The software update fixed my crash." →
+```
+
+More examples → stronger steering (at higher token cost).
+
+### Chain-of-thought with explicit steps
+
+```text
+Describe how to solve a quadratic equation using the quadratic formula.
+Think step by step, starting with the standard form of a quadratic equation,
+identifying the coefficients, then applying the quadratic formula.
+Include an example equation and solve it.
+```
+
+**Two mechanisms in one prompt:**
+
+1. **“Think step by step”** — encourages decomposition instead of one-shot answers.
+2. **Named substeps** — you do not fully trust the model to invent the right solution outline.
+
+Lecture outcome: the model can show each stage and solve a concrete numeric example—often **worse** if you omit the step-by-step instruction.
+
+## Examples
+
+**1. Zero-shot policy classification**
+
+“Classify this ticket as Billing, Technical, or Account without examples.” Acceptable when categories are standard and the model knows them.
+
+**2. Few-shot JSON extraction**
+
+Three `invoice text → {"total": ..., "currency": ...}` pairs teach field names and JSON-only answers.
+
+**3. CoT for incident response**
+
+“Think step by step: confirm blast radius, identify rollback target, draft customer comms, list verification checks.”
+
+## Limitations / edge cases
+
+- **Zero-shot** fails on bespoke taxonomies or rare languages/domains.
+- **Few-shot** examples can **bias** the model toward spurious patterns in your samples.
+- **CoT** increases latency and tokens; steps may still be **wrong**—verify on high-stakes math or compliance tasks.
+- Models may **hallucinate** intermediate work; explicit substeps help but do not guarantee correctness.
+
+## Industry scenarios
+
+**1. Retail review analytics**
+
+Start zero-shot on star-rated reviews; switch to few-shot when labeling “shipping delay vs product defect” with company-specific definitions.
+
+**2. Financial spreads parsing**
+
+Few-shot table snippets teach the model to emit fixed-column CSV for downstream ETL.
+
+**3. Engineering runbooks**
+
+CoT prompts walk junior engineers through diagnosis trees for production alerts, with mandated checkpoints (metrics → logs → recent deploys).
+
+## Key takeaways
+
+- Know **zero-shot**, **few-shot**, and **chain-of-thought**—exam and real designs reference all three.
+- **Few-shot** shapes **format** as much as **semantics** (sentiment → single word).
+- **CoT** = decomposition cue + optional **explicit step list** for harder procedural tasks.
+- Match pattern to **task familiarity** and **output structure** requirements.
+- Bedrock applications often combine patterns with RAG—see [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md).
+
+## References
+
+**In this repo**
+
+- [Prompt Best Practices](prompt-best-practices/index.md)
+- [Anatomy of a Prompt](anatomy-of-a-prompt/index.md)
+- [Prompt Misuse and Mitigating Bias](prompt-misuse-and-mitigating-bias/index.md)
+
+**AWS documentation**
+
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-engineering-guidelines.html">Prompt engineering guidelines for Amazon Bedrock</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Retrieve data and generate responses with knowledge bases</a>

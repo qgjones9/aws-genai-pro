@@ -1,45 +1,120 @@
 # Prompt Best Practices
 
-## Introduction
+## What this lecture covers
 
-Let's go through some best practices for prompt engineering that Amazon recommends.
+Amazon’s recommended **prompt engineering** habits: write clearly, add context, specify response shape, place format constraints at the **end** of the prompt, ask questions when possible, supply **examples**, decompose hard work, use **chain-of-thought** when needed, and **experiment** because models are non-deterministic and evolving.
 
-## Be Clear and Concise
+## Key definitions (from the lecture)
 
-One is to be clear and concise in what you're asking for. So a bad example of a prompt would be, "Write something about books, talk about two people and what they like, make it interesting." That's a little bit too vague. You know, we could be more specific about what we want there. A better example would be, "Write a short dialogue between two friends discussing their favorite books." And, you know, that's a little bit more concise. It's a tighter way of expressing what you want. The more wordy you make things, the more room there is for things to go wrong and how these things work.
+| Term | Definition |
+|---|---|
+| **Clear and concise prompting** | State the task tightly; extra vague wording gives the model room to misinterpret. |
+| **Desired response type** | Explicit format rules (e.g., each line ≤ two sentences) instead of fuzzy words like “short.” |
+| **Output-at-end placement** | Putting format/length constraints **last** in the prompt so the model’s final focus aligns with how you want the answer structured. |
+| **Chain-of-thought (CoT) prompting** | Asking the model to “think step by step” so it breaks problems into subtasks (closest current LLMs get to reasoning). |
 
-## Include Context
+## Key distinctions / comparisons
 
-Include context. So bad would be write a short dialogue, but a better approach would be to say more specifically, write a short dialogue to be used in a movie script. So being more precise about what you want, give it more context about what you want to get out of this thing.
+| Item | Notes |
+|---|---|
+| **Vague vs specific** | “Write something about books… make it interesting” vs “Write a short dialogue between two friends discussing their favorite books.” |
+| **Statement vs question** | “Explain the benefits of exercise.” vs “What are the benefits of regular exercise?”—questions may better match Q&A patterns in training data. |
+| **Zero guidance vs few-shot examples** | “Determine sentiment” alone vs examples that teach labels **and** output format (`positive` / `negative` only). |
+| **One-shot complex task vs subtasks** | Asking for an entire system in one prompt vs splitting into steps the **human** reasons through first. |
 
-## Specify the Desired Response Type
+## The problem (why best practices matter)
 
-Specify the desired response type. So you could just say "write a short dialogue, " but what does "short" mean? You wanna be more specific again. It would be better to say, "Write a short dialogue where each line is no more than two sentences long. " You can be very specific about the type and format of the output that you want there.
+- Wordy, ambiguous prompts increase variance and wrong interpretations.
+- LLMs today are **weak at open-ended multi-step reasoning** for large, compound tasks.
+- Models are **non-deterministic**—the same prompt can yield different quality on different runs or model versions.
 
-## Desired Output at the End of the Prompt
+## The solution: Amazon’s recommended practices
 
-And also specify the desired output at the end of the prompt if you can. So just write a short dialogue, obviously, is way too vague, but the better example here is where we put all this together, where the desired output is at the end of the prompt. At the end there, I'm tacking on where each line is no more than two sentences long, so that tends to help the the model understand what you want and actually deliver on what you asked for.
+| Practice | What to do (lecture) |
+|---|---|
+| **Be clear and concise** | Prefer tight task statements over rambling requests. |
+| **Include context** | Say *where* output will be used (e.g., “for a movie script”) so tone and structure fit. |
+| **Specify response type** | Replace “short” with measurable rules (e.g., each line ≤ two sentences). |
+| **Put desired output at the end** | Repeat format/length constraints as the **final** lines of the prompt. |
+| **Phrase input as a question** | Use “What are…?” style when seeking factual Q&A-style answers. |
+| **Provide example responses** | Show input → expected output pairs; teaches **task** and **format** (useful for quasi-structured extraction). |
+| **Break up complex tasks** | You do the reasoning; prompt each subtask separately. |
+| **Keep it simple / CoT** | Ask “do you understand?” sparingly; prefer “think step by step” for decomposition. |
+| **Experiment** | Try variants; track what new model versions handle well or poorly. |
 
-## Phrase Input as a Question
+### Sentiment example (few-shot + structured output)
 
-More best practices, always phrase your input as a question if you can. So a bad example would be explain the benefits of regular exercise period. A better one would be what are the benefits of regular exercise question mark? Because, well, that might more easily pick up training information that it picked up during the training of the large language model that, where people actually asked that question and got a relevant answer.
+```text
+Determine the sentiment of the following sentence using these examples:
+"I had a great time at the park today" → positive
+"That restaurant had terrible service" → negative
 
-## Provide Example Responses
+Sentence: "The flight was delayed but the crew was helpful."
+```
 
-Provide an example response if you can. So again, in the input section of the prompt, this is a good example of doing that. So you could just say, "Determine the sentiment of the following sentence," and try to let it figure out what sentiment means. It would be better to supply some examples of how you want that to work. So I could say, "Determine the sentiment of the following sentence using these examples." "I had a great time at the park today" should result in the word positive. "That restaurant had terrible service" should result in the word negative.
+Because examples show **only** the words `positive` or `negative`, the model learns both classification and **output shape**—a practical way to get structured fields from an LLM.
 
-So not only here can you give it examples of what positive and negative sentiment are, you can also tell it exactly what you want the format of that response to be. So because you gave it those examples, it knows that you want to get just the word positive or the word negative as the output. And this is a great trick for actually getting somewhat structured data out of a large language model. You can be very specific about the output that you want and the words and format that you want that output in if you just tell it and give it some examples on how to do it, it can learn from it.
+### Chain-of-thought nudge
 
-## Break Up Complex Tasks
+```text
+Plan the migration steps for moving a monolith API to Lambda.
+Think step by step, starting with inventorying endpoints, then grouping domains, then defining cutover order.
+```
 
-Break up complex tasks. So if you want something more complicated, like, you know, writing a large system and writing code for it the truth is, at least today, large language models aren't really great at reasoning. So you need to do the reasoning for it whenever you can. If you have a complex task, help it out by splitting that up into simpler subtasks and then ask the LLM to, to execute each subtask individually.
+## Examples
 
-## Keep It Simple and Chain of Thought
+**1. Dialogue for a screenplay**
 
-Keep it simple. If you're not sure if what you're telling it is simple enough, you can ask the model to say, "Hey, do you understand what I'm asking for?" although you'll probably be able to figure that, that out pretty quickly based on the quality of the answer that you get.
+Bad: “Write something about books, two people, make it interesting.”  
+Better: “Write a short dialogue **to be used in a movie script** between two friends discussing their favorite books, where each line is no more than two sentences.”
 
-Sometimes the trick is to ask the model to think step by step. We call this chain of thought prompting, and we'll talk about that later. but you can actually get it to generate those subtasks on its own sometimes. So this is as close as LLMs get to reasoning right now, if you explicitly ask it to think step by step, it will at least try to break this down into subtasks and break this down into individual components when it tries to solve the problem based on similar problems that it saw in its training data.
+**2. Structured extraction**
 
-## Experiment and Be Creative
+Use labeled examples so the model returns exactly `SKU-12345` style IDs, not prose explanations.
 
-And experiment, be creative. So remember, these large language models are non-deterministic, they change a lot. You're not gonna get the same answer every time you ask. So as these models develop in their capabilities and evolve over time, you just need to play around with them and stay on top of what they're good at and what they're not good at through trial and error. Try out different prompts, see what works the best.
+**3. Complex engineering task**
+
+Instead of “build the whole microservice,” prompt: (1) list API endpoints, (2) draft OpenAPI for one endpoint, (3) generate handler skeleton—each as its own call.
+
+## Limitations / edge cases
+
+- **“Think step by step”** helps but is not guaranteed reasoning; verify outputs on critical paths.
+- **Questions** help Q&A-style tasks but are not magic for every task type (e.g., code generation).
+- **Examples** consume tokens; balance count vs context window.
+- **Non-determinism** means regression-test prompts when you upgrade models.
+
+## Industry scenarios
+
+**1. Content operations**
+
+Editors standardize prompts with context (“LinkedIn post for B2B SaaS”) and line limits at the end; A/B test two phrasings because Claude vs Titan behave differently.
+
+**2. Support triage bot**
+
+Break workflow: classify intent → retrieve policy chunk → draft reply—three prompts instead of one “do everything” message.
+
+**3. Data labeling pipeline**
+
+Few-shot sentiment (or category) examples in prompts produce CSV-friendly single-token labels without training a custom classifier.
+
+## Key takeaways
+
+- **Specificity beats cleverness**—context, format, and length should be explicit.
+- **Examples** teach both semantics and **output format** (valuable for light structuring).
+- **Decompose** complex work; LLMs should not be your only reasoning engine today.
+- **Chain-of-thought** can elicit stepwise plans when you cannot pre-split tasks yourself.
+- **Experiment continuously** as models and pricing change—see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-engineering-guidelines.html">Bedrock prompt engineering guidelines</a>.
+
+## References
+
+**In this repo**
+
+- [Anatomy of a Prompt](anatomy-of-a-prompt/index.md)
+- [Types of Prompts](types-of-prompts/index.md)
+- [Intro to Prompt Engineering](intro-to-prompt-engineering/index.md)
+- [Enforcing Use of Structured Data](enforcing-use-of-structured-data/index.md)
+
+**AWS documentation**
+
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-engineering-guidelines.html">Prompt engineering guidelines for Amazon Bedrock</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html">Carry out a conversation with the Converse API</a>

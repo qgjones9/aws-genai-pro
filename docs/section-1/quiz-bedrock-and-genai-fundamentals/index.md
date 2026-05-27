@@ -1,5 +1,9 @@
 # Quiz: Bedrock and GenAI Fundamentals
 
+## What this lecture covers
+
+Practice questions on Bedrock knowledge bases, embeddings, chunking, ingestion design, guardrails, and multimodal pipelines from Section 1. Use this page to check understanding before moving on—answers and explanations are marked in place below.
+
 **Question 1:**
 
 A retail company wants an internal “AI search” assistant that can answer questions about constantly changing product documentation and policies stored in S3. The team wants to minimize hallucinations for questions about recent changes and avoid frequent, expensive model retraining. Which approach best meets these requirements?
@@ -63,3 +67,22 @@ An e-commerce company wants customers to upload a photo of an item (for example,
 - [ ] Pre-segment the image into regions and send each region as a separate input to the model.
 - [ ] Use Amazon Rekognition to extract text from the photo and pass it as a prompt to the embedding model.
 
+## References
+
+**In this repo**
+
+- [Amazon Bedrock Overview](amazon-bedrock-overview/index.md)
+- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
+- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
+- [Pre-Retrieval and Chunking Strategies](pre-retrieval-and-chunking-strategies/index.md)
+- [Managing Chunking Strategies with Bedrock](managing-chunking-strategies-with-bedrock/index.md)
+- [Optimizing your Vector Store and Embeddings](optimizing-your-vector-store-and-embeddings/index.md)
+- [Bedrock Guardrails](bedrock-guardrails/index.md)
+- [Token-Level Redaction](token-level-redaction/index.md)
+- [Mulitmodal Models and Pipelines with Bedrock](mulitmodal-models-and-pipelines-with-bedrock/index.md)
+- [Anatomy of a Prompt](anatomy-of-a-prompt/index.md)
+- [Prompt Best Practices](prompt-best-practices/index.md)
+- [Types of Prompts](types-of-prompts/index.md)
+- [Prompt Misuse and Mitigating Bias](prompt-misuse-and-mitigating-bias/index.md)
+- [Enterprise Integration](enterprise-integration/index.md)
+- [AWS Well-Architected Tool Generative AI Lens](aws-well-architected-tool-generative-ai-lens/index.md)

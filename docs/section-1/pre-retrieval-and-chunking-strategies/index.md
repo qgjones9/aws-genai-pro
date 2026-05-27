@@ -1,37 +1,103 @@
 # Pre-Retrieval and Chunking Strategies
 
-## RAG Depth for the Exam
+## What this lecture covers
 
-Alright, so we've understood how a rag or a knowledge base works at a high level, but this exam expects you to know more depth about it. So to do so, let's break up the R in RAG. So what does that retrieval stage actually do, and how can we split that up and fine-tune it more efficiently?
+Exam-depth treatment of the **R** in RAG: splitting retrieval into **pre-retrieval**, **retrieval**, and **post-retrieval** stages, with emphasis on how **storage granularity** and **chunking** choices before runtime query affect answer quality, plus **semantic chunking** using an LLM.
 
-## Pre-Retrieval, Retrieval, and Post-Retrieval
+## Key definitions (from the lecture)
 
-So we can split this up into, first of all, a pre-retrieval stage. So before we do anything with looking up data, we need to store data in our underlying vector store somehow first. And the choices we make in that storage make a big difference. So we can choose the granularity in which we're storing data. So am I storing individual sentences of information for context, am I storing paragraphs, am I storing just arbitrary fixed lengths of text, right? Those choices can make a big difference into how much context I have surrounding the information I'm retrieving and how precise that information is and how relevant it is to the actual query that I'm executing. So the choices we make in how we store this data makes a big difference in the quality of the response.
+| Term | Definition |
+|---|---|
+| **Pre-retrieval** | Everything before runtime lookup: how data is stored/chunked in the vector store and optional query rewriting—choices made at ingest/index time and sometimes on incoming queries. |
+| **Retrieval** | Fetching candidate chunks from the vector store (mechanism depends on store; lecture treats as less exam-interesting). |
+| **Post-retrieval** | Processing retrieved context: re-ranking, selecting most relevant passages, further augmentation, then generation. |
+| **Chunking** | Splitting a large corpus into chunks stored in the vector DB so queries can retrieve relevant pieces later. |
+| **Data granularity** | How large each stored unit is (sentence, line, paragraph, fixed token window, summary, etc.). |
+| **Semantic chunking** | Using an LLM to decide chunk boundaries by semantic similarity of text rather than fixed rules only. |
 
-Also, how we extract that data can make a difference. And when a query comes in, we might choose to actually rewrite that query to make it look up that data more efficiently. So all that's happening before we even retrieve anything at runtime. That's pre-retrieval.
+## Key distinctions / comparisons
 
-Once we've done that, we can actually retrieve the data, and how we do that, well, you know, that depends on what kind of a vector store we're using, not terribly interesting. But after we've actually gotten that retrieved data, that retrieved context back from our knowledge base, we gotta do something with it, right? So now we're at the post retrieval stage where we need to somehow make sense of that information that we collected, maybe re-rank it, maybe, you know, decide what's most relevant to our query, augment that information further, maybe, and then finally generate our response.
+| Item | Notes |
+|---|---|
+| **Pre- vs post-retrieval** | Pre = index-time storage and query-prep; post = what you do with hits before the FM sees them (re-rank, filter, augment). |
+| **Too large vs too small chunks** | Large chunks add context but hurt relevance; tiny snippets lack meaning on their own. |
+| **Raw lines vs surrounding dialogue** | Lieutenant Commander Data example: line-only storage may need neighboring lines for context, or LLM summaries instead of raw script lines. |
+| **Fixed rules vs semantic chunking** | Sentence/paragraph/token splits are cheap; LLM-driven splits are flexible but **expensive and slow**. |
+| **Token limits then vs now** | Older/smaller models choke on huge context; modern models accept very large contexts, but **effective** context still has practical limits. |
 
-## Pre-Retrieval Deep Dive
+## The problem (why you need it)
 
-So let's dive more deeply to that pre-retrieval stage, right? So it is very important to think about how you store this information in the underlying vector database or whatever database it is. That data granularity matters a lot. So you wanna have enough to have context around what's being retrieved, but not so much that you're losing the relevancy to the what you're actually looking for. And if it's too small, that's also a problem, right? Because you're gonna be picking up these little snippets of text that have no real meaning to themselves. So it's, it's kind of an art, right? Right?
+- High-level RAG diagrams are not enough for the exam—you must understand **retrieval stage mechanics**.
+- Poor **granularity** yields irrelevant or context-starved chunks at query time.
+- Dumping excessive retrieved text into the FM can derail answers even when under hard token caps.
 
-## Lieutenant Commander Data Example
+## The solution
 
-So for example, if I'm building a system that simulates Lieutenant Commander Data, a character from Star Trek: The Next Generation, am I gonna build that on a database of everything he said, right? Or the scripts within the show? Is that gonna be every set of lines that he said? Am I gonna break that up line by line? Am I gonna split it up into individual sentences? why am I just giving you data's line? So I need to give other people's lines surrounding those lines to give that more context. Maybe I just wanna summarize those lines, right? Maybe I don't need the raw data at all. Maybe I can use an LLM for that sort of a thing. So Lots of choices you can make here to control the quality of the results that you get back from this system.
+**Three-stage RAG retrieval pipeline:**
 
-## Chunking Definition
+1. **Pre-retrieval**: Chunk/index design (and optional query rewriting before search).
+2. **Retrieval**: Vector (or hybrid) search returns candidate context.
+3. **Post-retrieval**: Re-rank, curate, augment context, then generate.
 
-Now, the process of splitting up that information is called chunking, okay? Very important term. So, I've got this huge corpus of data coming in that I need to store in a vector store for my retrieval augmented generation system. How do I split that up? That's called chunking. How I chunk that data up into specific chunks of data that might be relevant to a given query later on, okay?
+Optimize **pre-retrieval** by choosing chunk sizes and representations that balance **context** and **precision** for your domain.
 
-## Token Limits and Context Size
+## How to apply it
 
-A little more on chunking in general, so we do need to be careful not to feed more information into the large language model, the foundation model, than it can handle. So some smaller models might have limits on how many tokens they can handle at once. If I'm giving it back, you know, thousands and thousands and thousands of characters of context, maybe it's gonna lose its train of thought there, you know, even if I don't actually hit that limit. Having too much information can sometimes send these models off the rails, so sometimes less is more, right? Now these days, most modern large language models can handle millions of tokens, so not so much of a hard barrier, but again, There's a limit as to what they can process effectively
+Design questions before choosing chunking:
 
-## Semantic Chunking
+- What is the **smallest meaningful unit** (sentence, paragraph, utterance + neighbors)?
+- Do you need **summaries** instead of raw text?
+- Will queries be rewritten before search (pre-retrieval on the query side)?
 
-Another technique is something called semantic chunking, kind of an interesting one. So the idea here is that maybe I can actually use an LLM to do my chunking and say, "Here, large language model, here's a huge chunk of data that fits within your large context window, you figure out the way to chunk it up." So you figure out what bits of text are semantically similar to each other, that kind of convey the same thought, if you will, and have a large language model think about the best way to split that up. Obviously, that gets expensive and costly and takes a lot of time, so, you know, you don't wanna go there if you don't have to, but That is an option.
+Semantic chunking prompt pattern (concept from lecture / original paper idea):
 
-## LLM Prompt Example for Semantic Chunking
+```python
+# Illustrative pattern: ask an FM to propose semantically coherent chunks
+prompt = """
+Decompose the following document into chunks that preserve complete ideas.
+Prefer boundaries where topics change. Respect a max token size per chunk.
 
-So here's an example of a prompt that you might send to an LLM to decompose content into chunks that make sense. And if you wanna read through that, you can, it might make it, make a little bit more sense. So this is basically out of the original paper that had that idea. So you can have fixed simple rules like every sentence, every paragraph, every certain number of tokens, or you can do something fancier and actually try to chunk that data up semantically using another foundation model.
+Document:
+{document_text}
+"""
+# Then ingest resulting chunks into Bedrock Knowledge Base (possibly with "no chunking")
+```
+
+Bedrock-specific chunking controls are detailed in [Managing Chunking Strategies with Bedrock](managing-chunking-strategies-with-bedrock/index.md).
+
+## Examples
+
+- **Star Trek “Data” bot**: Store every line Data spoke vs whole scenes vs sentence-level with neighbor lines vs LLM summaries—each changes retrieval quality for in-character responses.
+- **Fixed token chunks**: Every N tokens, every sentence, or every paragraph as simple pre-retrieval rules.
+- **Semantic chunking**: Pass a large document through an FM that groups semantically similar sentences before embedding.
+
+## Limitations / edge cases
+
+- Chunking strategy is described as an **art**, not one correct setting.
+- **Semantic chunking** cost and latency scale with corpus size.
+- Very large context windows reduce hard failures but **too much context** can still confuse models.
+- Exam expects deeper retrieval knowledge than console defaults alone.
+
+## Key takeaways
+
+- Split RAG retrieval into **pre-retrieval**, **retrieval**, and **post-retrieval**.
+- **How you store data** (granularity/chunking) strongly affects relevance and surrounding context.
+- **Chunking** = splitting corpus for vector storage; core exam term.
+- Balance chunk size: enough context, not so much that relevance drops; not so small snippets are meaningless.
+- **Semantic chunking** uses an LLM to split by meaning—powerful but costly.
+- **Less is sometimes more** when feeding retrieved context to the FM.
+
+## Industry scenarios
+
+1. **Legal research assistant**: Chapters chunked by section and clause boundaries (pre-retrieval) so retrieval returns complete obligations, not arbitrary 300-token fragments.
+2. **Character chatbot for media IP**: Screenplay stored with neighboring speaker lines per chunk so a single utterance retains scene context.
+3. **Enterprise wiki refresh**: Pre-retrieval pipeline re-chunks updated Confluence pages on ingest while post-retrieval re-ranker (later course topic) orders hits before the answer model runs.
+
+## References
+
+- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
+- [Managing Chunking Strategies with Bedrock](managing-chunking-strategies-with-bedrock/index.md)
+- [Optimizing your Vector Store and Embeddings](optimizing-your-vector-store-and-embeddings/index.md)
+- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking.html">Knowledge base chunking</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-retrieval.html">Retrieval from knowledge bases</a>

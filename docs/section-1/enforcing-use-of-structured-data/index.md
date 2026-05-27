@@ -1,29 +1,139 @@
 # Enforcing Use of Structured Data
 
-## Enforcing Structured Data in Responses
+## Lecture notes
 
-There's Let's talk about enforcing structured data in our responses. Sometimes we don't actually want just raw text in our output, right? We need actual structured data we can then operate on and do further stuff on. So how do we make that happen? Sometimes I need structured JSON output, specifically, right? So one way is to just say that in the prompt and say, "Hey, model, I need a structured output, please do that." And these days it usually will. You know, it is a little bit of a leap of faith to make sure that it actually follows those English language prompts. It might feel a little bit sketchy at first but this is how it works, folks.
+### What this lecture covers
 
-## Prompt-Based JSON Output
+Generative apps often need **machine-readable output** (especially **JSON**), not free-form prose. The lecture covers two Bedrock-friendly approaches: **explicit prompt instructions with a JSON schema** and **tool use via the Converse API**—plus certification terminology (**response format template**) and how modern models compare on reliability.
 
-So for this example prompt on the right here, I can say, "I want you to analyze customer reviews." The trick is to be specific, right? So if you provide specific numbered instructions, it's gonna be a little bit more likely to follow that more precisely. And it's also, of course, very helpful to give it an example of the output that you want.
+### Key definitions (from the lecture)
 
-## Attaching a JSON Schema
+| Term | Definition |
+|---|---|
+| **Structured data (output)** | Responses shaped as JSON or other schemas your downstream code can parse and act on. |
+| **Prompt-based JSON** | Asking the model in natural language to return JSON, with **numbered steps**, **examples**, and an attached **JSON schema**. |
+| **JSON schema (in prompt)** | A reference schema the model should follow; missing fields → `null`; total failure → **error response** object. |
+| **Tool calling** | Model emits **structured arguments** intended for an external function/API (agentic pattern). |
+| **Tool use (Converse API)** | <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html">Converse</a> `toolConfig` declares tools/schemas the model may invoke. |
+| **Response format template** | Exam term for supplying a **specific output schema** the model must adhere to (same idea as schema-driven JSON in the prompt). |
 
-So I'm saying, "Hey," Analyze this review data within these specific tags. Give me back a JSON response that uses the provided schema. Okay, so I'm actually attaching an actual JSON schema to this prompt as well for it to use as a reference. And it says what to do. So if I'm missing fields return them with null values. If it if it doesn't work at all, give me an error response, okay? And here's an example of what I want that response to look like. So this is what a valid JSON response looks like: review ID, a sentiment, and a summary. And I've also, again, I'm gonna repeat, I've given it a provided JSON schema explicitly to use. So if you are super explicit and super simple in your instructions, it will probably follow them and say, "Okay, fine, here's your JSON data." So that's one way to do it, just bake it into your prompt and just make sure you're super specific.
+### Key distinctions / comparisons
 
-## Tool Calling for Structured Output
+| Item | Notes |
+|---|---|
+| **Prompt-only vs tool calling** | Lecture: for **modern models**, both are similarly reliable for “just give me JSON”; tool calling shines when building **real agentic systems** with external tools. |
+| **Older vs modern models** | Smaller/older models benefited more from tool-use framing; **current models** often follow explicit prompt schemas equally well. |
+| **Structured output vs RAG** | Structured output is about **response shape**; [RAG](../retrieval-augmented-generation-rag/index.md) is about **injecting context**—orthogonal but composable. |
+| **Fake tool vs real tool** | You can define a tool whose only job is to **emit structured data** you capture—even if no external API exists. |
 
-Another way is by using tool calling functionality in these foundation models. So a lot of these systems are built around agentic AI systems now, right? And that means that these LLMs need to call tools. They need to have the ability to do stuff outside, you know, call stuff on the internet, call external APIs, whatever it might be, call MCP servers, call custom functions. In all those cases, we need to have some sort of a structured data to pass into these external systems, right? So this is a problem that's very well solved in most models. Bedrock is no No exception.
+### The problem (why you need it)
 
-## Bedrock Converse API Tool Use
+- Downstream services (databases, workflows, UIs) require **fields** like `review_id`, `sentiment`, `summary`—not paragraphs.
+- Free-text answers force fragile parsing and cause **integration bugs**.
+- Agent frameworks need **typed parameters** to call APIs, MCP servers, or Lambdas safely.
 
-So if we use tool use in Bedrock's converse API, we can de-we can specify external tools that we wanna communicate with, and we could fake this out to just say, okay I want to call a tool that expects this schema, and that will basically say, well, okay, fine I'll do my best, and here's the schema, the structured data that you need to call this external tool. And, you know, even if it's not strictly speaking a tool, you just need that structured output for something else, maybe all the tool does is output that someplace where you can get it, right? That's fine, that's still a tool.
+### The solution
 
-## Prompt vs Tool Calling
+#### Approach A — Prompt with schema and example (lecture pattern)
 
-But in practice, this doesn't actually work any better or worse than just putting it in the prompt. So if you are building a larger AGI system with tools that your model can use, yeah, by all means, use those capabilities. but if you just need to get structured data back, doesn't really matter because under the hood, that's probably all it's really doing in the first place. with older, you know, smaller models, it did make a difference but with modern models, there really is no measurable difference between these two techniques.
+Be **specific**:
 
-## Exam Takeaway and Response Format Template
+1. Numbered instructions (analyze review inside tags, return JSON, use schema, nulls for missing fields, error object on failure).
+2. **Example JSON** showing valid output shape.
+3. Attach the **JSON schema** again in the prompt (redundancy helps compliance).
 
-But the point though, for the exam, is that you can get structured JSON output out of a prompt. So that's the main takeaway in the context of this certification. And by the way, they might refer to that as a response format template. So the act of giving it a specific schema that you want the response in, that is a response format template, just to get the terminology consistent.
+Example shape from the lecture:
+
+```json
+{
+  "review_id": "123",
+  "sentiment": "positive",
+  "summary": "Great battery life."
+}
+```
+
+#### Approach B — Tool use via Converse API
+
+- Declare a tool with the **desired parameter schema** in `toolConfig`.
+- Model returns **tool input** matching that schema—even if the “tool” only logs or stores the payload.
+- Natural fit for [agentic](../intro-to-prompt-engineering/index.md) apps that already expose real tools.
+
+See [More Depth on the Bedrock Converse API](../more-depth-on-the-bedrock-converse-api/index.md) for `toolConfig` and guardrail hooks.
+
+### How to apply it
+
+**Prompt-first (conceptual template):**
+
+```text
+1. Analyze the review between <review>...</review>.
+2. Return JSON only, matching the schema below.
+3. Use null for missing fields; if impossible, return {"error": "..."}.
+
+Example output:
+{"review_id": "...", "sentiment": "...", "summary": "..."}
+
+Schema:
+{ ... JSON Schema here ... }
+```
+
+**Tool-first (conceptual):**
+
+- Define tool `record_sentiment` with properties `review_id`, `sentiment`, `summary`.
+- Invoke Converse with `toolConfig`; read structured `toolUse` input from the response.
+
+### Examples
+
+**1. Product review analytics pipeline**
+
+E-commerce ingests star ratings via a prompt+schema; Lambda writes rows to DynamoDB without regex-parsing prose.
+
+**2. Agent that calls a pricing API**
+
+Tool schema requires `sku` and `region`; model must populate both before the workflow invokes the real pricing Lambda.
+
+**3. Certification-style question**
+
+“If you need JSON from a model in Bedrock, can you?” → **Yes**, via explicit **response format template** / schema prompt or tool use.
+
+### Limitations / edge cases
+
+- **Leap of faith on prompts alone** — Still validate JSON in code (`json.loads`, schema validators); models can drift on edge cases.
+- **Exam vs engineering** — Exam stresses that structured JSON **is achievable**; production still needs **retries and validation**.
+- **Tool overhead** — Defining tools adds ceremony when you only need a one-shot JSON blob (prompt may suffice on modern models).
+
+### Industry scenarios
+
+**1. Customer sentiment dashboard**
+
+Marketing automation requires `{sentiment, summary}` per review; schema prompts feed BI tools without human relabeling.
+
+**2. IT automation agent**
+
+Service desk agent uses tool schemas to open tickets (`priority`, `category`, `system_id`) before calling ServiceNow APIs.
+
+**3. Loan underwriting copilot**
+
+Underwriters need structured `{risk_flags[], recommended_action}`; JSON schema in prompt aligns with compliance storage; nulls mark missing applicant fields.
+
+### Key takeaways
+
+- You can enforce **JSON structured output** in Bedrock—critical for integrations and the certification exam.
+- **Be explicit**: numbered steps, examples, and an attached **JSON schema** (response format template).
+- **Tool use** via Converse matches agentic architectures; for plain JSON on modern models, prompt vs tool is often a **wash**.
+- Always **validate** structured output in application code.
+- Pair with [Intro to Prompt Engineering](../intro-to-prompt-engineering/index.md) and Converse API depth for full stack design.
+
+### References
+
+**In this repo**
+
+- [More Depth on the Bedrock Converse API](../more-depth-on-the-bedrock-converse-api/index.md)
+- [Intro to Prompt Engineering](../intro-to-prompt-engineering/index.md)
+- [Bedrock Prompt Flows](../bedrock-prompt-flows/index.md)
+- [Amazon Bedrock Prompt Management](../amazon-bedrock-prompt-management/index.md)
+
+**AWS documentation**
+
+- <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html">Converse API</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-runtime_example_bedrock-runtime_Converse_AmazonNovaText_section.html">Converse API examples</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html">Inference using Converse API (tool use)</a>

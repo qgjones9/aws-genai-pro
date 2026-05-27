@@ -1,39 +1,117 @@
 # Mulitmodal Models and Pipelines with Bedrock
 
-## Multimodal models overview
+## What this lecture covers
 
-Alright, let's talk a little bit about multimodal models and multimodal pipelines and what that means. Pretty simple concept, it just means that we're mixing different media types into the same model. That might be text data, it might be images, it might be audio, it might be video, could be documents, whatever, right? So basically, we have a model that's able to have specialized encoders for all these different data types, and it produces these embedding vectors that allow us to compare these different types of media against each other.
+**Multimodal** models and pipelines mix text, images, audio, video, and documents in one flow; Bedrock examples include Claude, Nova, and **Titan Multimodal Embeddings G1** for cross-modal embeddings, RAG retrieval, and API usage with **base64-encoded** images.
 
-## Bedrock multimodal models
+## Key definitions (from the lecture)
 
-Now, some models available for Bedrock are multimodal natively Claude, for example, is. It can handle images and text or whatever. Amazon Nova as well is multimodal, and Amazon Titan is an embedding model specifically that is multimodal in nature as well. So that's pretty cool, right? It means we could take a picture of a chicken and some text about a chicken and throw them into our multimodal embedding model and get back embedding vectors that are comparable.
+| Term | Definition |
+|---|---|
+| **Multimodal model** | Model with specialized encoders per media type, producing embedding vectors comparable across modalities. |
+| **Multimodal pipeline** | Ingest/preprocess path that prepares each media type (e.g. base64 images) before calling Bedrock. |
+| **Cross-modal retrieval** | Query with one modality (text or image) and retrieve related content in another (image + text about the same concept). |
+| **Titan Multimodal Embeddings G1** | Bedrock embedding model accepting **text**, **image**, or **both** in one request. |
+| **Base64 image payload** | Images must be base64-encoded (UTF-8) in JSON for the Titan multimodal embeddings API shape shown in the lecture. |
 
-## RAG and cross-modal retrieval
+## Key distinctions / comparisons
 
-So then I can search for a chicken, and I might get back the image and also the text related to that. And this is gonna be important within the retrieval augmented generation stage of things, right? So as I'm retrieving Context about the prompt about chickens, this will allow me to retrieve that data in whatever form it might be that's relevant to the query.
+| Item | Notes |
+|---|---|
+| **Text-only RAG vs multimodal RAG** | Multimodal embeddings let prompts and KB chunks include non-text media, not only paragraphs. |
+| **Generation models vs embedding models** | Claude/Nova multimodal for understanding/generation; Titan multimodal embeddings for vector search. |
+| **Embed query vs embed corpus** | Same model can embed incoming prompts (any supported modality) and stored KB vectors for comparison. |
+| **Bedrock-built preprocessing vs SageMaker/Glue** | Lecture notes preprocessing may happen in Bedrock later or in SageMaker/Glue/custom ETL before invoke. |
 
-## Embeddings and prompts both ways
+## The problem (why you need it)
 
-So to search, I just hit the model for an embedding vector for whatever image, text, or video I'm sending in, and that too could be in any format, right? So I could say, "Here's a picture of something, what is it?" Right? And I could say, "Okay, well, my embedding model says this is similar to chickens, and it could come back with text about chickens, right?" So it works both ways, right? So I can embed embeddings in my rag system from different types of media type, and I, I can also take prompts that incorporate different types of media as well through these multimodal models and pipelines.
+- Enterprise knowledge is not text-only: diagrams, scans, photos, audio, and video carry meaning.
+- Text-only embeddings cannot align a photo query with a textual knowledge article about the same entity.
+- Pipelines must normalize binary media into the wire format each Bedrock model expects.
 
-So it just lets us mix and match text, images, audio, video, documents, whatever it might be.
+## The solution
 
-## Titan Multimodal Embeddings G1
+Use multimodal-capable Bedrock models end to end:
 
-A little bit of nitty gritty on how it works, so let's dive into an example using the Titan Multimodal Embeddings G1 model. So again, this is just an embedding model here. the way it works in practice, if you're writing some code to actually embed something, where it might be a bit of text, where it might be an image, both are accepted by this particular model, you're gonna have to encode this stuff in some consistent way.
+1. **Ingest**: Encode images (and other media per model docs) in your pipeline before indexing.
+2. **Index**: Store multimodal embedding vectors in your vector store / knowledge base flow.
+3. **Retrieve**: Query with text, image, or video embedding as supported—retrieve matching chunks regardless of stored modality.
+4. **Generate / answer**: Multimodal FMs (Claude, Nova) can consume mixed inputs in prompts as supported.
 
-## Titan API and base64 encoding
+Titan Multimodal Embeddings G1 request shape (from lecture):
 
-Now, the specific API for talking to the Titan Multimodal Embeddings model looks like this on the right. So you pass in the model ID. Pass in input text and/or an image, and if it's an image, I need to go in base sixty-four encode that first. So that's what you're seeing there with that little line in the middle that says base sixty-four dot b sixty-four encode, reading up the context of that chicken image and then converting it into UTF-8 format so I can send it across so that it kinda looks like text data across the wire but we know it's image. So then I dump that into a larger JSON structure where I have input text that contains any text I wanna encode, input image contains that base sixty-four encoded image data that I wanna encode, that's what gets sent into the model at the end of the day, alright?
+- `modelId`
+- `inputText` (optional)
+- `inputImage` with **base64** bytes (optional)
+- Any combination of text and/or image is valid for Titan in the lecture.
 
-## Text, image, or both
+## How to apply it
 
-And in the case of the Titan model, you can pass in a text or an image or both if you want to at the same time any of those cases will work fine.
+```python
+import base64
+import json
+import boto3
 
-## Pipelines and preprocessing
+def embed_chicken_example(image_path: str, text: str, region: str = "us-east-1"):
+    with open(image_path, "rb") as f:
+        image_b64 = base64.b64encode(f.read()).decode("utf-8")
 
-Now, if you're doing this, this implies that your data processing pipeline needs to do this at some point, right? So at some point before I hit my model, I need to take those images and base sixty-four encode them in this particular example. And how we do this, well, we'll get to that later on. Maybe you'll use SageMaker, maybe you'll use Glue, maybe you'll use something else entirely, like something built into Bedrock. We'll get to that, alright?
+    client = boto3.client("bedrock-runtime", region_name=region)
+    body = {
+        "inputText": text,
+        "inputImage": image_b64,
+    }
+    response = client.invoke_model(
+        modelId="amazon.titan-embed-image-v1",  # Titan Multimodal Embeddings G1 family
+        body=json.dumps(body),
+        contentType="application/json",
+        accept="application/json",
+    )
+    return json.loads(response["body"].read())
 
-## Summary
+# Pipeline responsibility: base64-encode images before invoke_model
+```
 
-However, that's what multimodal models and pipelines are. They just mix and match different media types at the end of the day.
+RAG flow (lecture):
+
+- Embed a **picture of a chicken** and **text about chickens** into the same embedding space.
+- Search “chicken” → may return **image and text** assets related to chickens.
+- Prompt can be multimodal too: image in, text answer out (or vice versa).
+
+Preprocessing belongs **before** model invoke—whether implemented in Bedrock features later or in SageMaker/Glue/other ETL (course defers tooling details).
+
+## Examples
+
+- **Chicken image + chicken text**: Both embedded with Titan multimodal; semantic search links visual and textual assets.
+- **“Here’s a picture of something, what is it?”**: Image embedding similar to chicken corpus → retrieval returns chicken-related text chunks.
+- **API snippet**: `base64.b64encode` on image bytes placed in JSON `inputImage` alongside `inputText`.
+
+## Limitations / edge cases
+
+- Lecture focuses on **Titan Multimodal Embeddings G1** API shape; full pipeline tooling (SageMaker, Glue, Bedrock automation) is “later in the course.”
+- You must implement **base64 encoding** (or equivalent) in the data pipeline for images in this API pattern.
+- Not every Bedrock model is multimodal—check model cards for supported modalities.
+
+## Key takeaways
+
+- **Multimodal** = multiple media types in one model/pipeline with comparable embeddings.
+- Bedrock examples: **Claude**, **Nova** (multimodal FMs), **Titan** multimodal **embeddings**.
+- RAG can retrieve context across **text, image, audio, video, documents** when indexed as embeddings.
+- Works **both ways**: multimodal prompts and multimodal knowledge.
+- **Titan Multimodal Embeddings G1**: text and/or image in; images as **base64** in JSON.
+- Pipelines must preprocess media **before** invoking the model.
+
+## Industry scenarios
+
+1. **Field service manual**: Technicians photograph equipment labels; multimodal KB matches photos to PDF procedure chunks and returns steps plus reference diagrams.
+2. **Retail catalog**: Product photos and descriptions share embedding space; visual search on shelf photos retrieves spec sheets and return policies as text.
+3. **Media archive**: Newsroom ingests video keyframes (as images) and transcripts; reporters query with a clip still and receive related articles and prior broadcast text.
+
+## References
+
+- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
+- [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md) (parser options for images/PDFs)
+- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-multiemb-models.html">Titan Multimodal Embeddings G1</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html">Supported foundation models in Amazon Bedrock</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_InvokeModel.html">InvokeModel</a>

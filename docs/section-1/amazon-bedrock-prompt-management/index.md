@@ -1,45 +1,119 @@
 # Amazon Bedrock Prompt Management
 
-## Prompt management overview
+## Lecture notes
 
-One cool feature with Bedrock is prompt management that's built in, and that allows you to reuse prompts across different applications so you don't have to keep reinventing the wheel. So if you have some sort of a specialized prompt, you can share that across applications using prompt management, and they may be versioned as well. So if you wanna keep a history of how you've refined that prompt over time and want the ability to roll back, you can do that too.
+### What this lecture covers
 
-## Variables in prompts
+<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-create.html">Amazon Bedrock Prompt Management</a> lets you **create, version, test, and reuse** prompts across applications—so specialized instructions are not copy-pasted into every service. Prompts support **variables**, **variants**, optional **tools and caching**, and integration with <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/flows-how-it-works.html">Bedrock Flows</a>.
 
-Also, what's useful is that these prompts can include variables, and this is where it becomes super useful. So this isn't just a version management tool, it's a way of incorporating these prompts into larger applications, and we'll see how that works momentarily.
+### Key definitions (from the lecture)
 
-## Variable syntax and placeholders
+| Term | Definition |
+|---|---|
+| **Prompt management** | Built-in Bedrock capability to store prompts centrally and share them across apps. |
+| **Variable / placeholder** | Dynamic slot in a prompt, written as `{{genre}}`, `{{number}}` (double curly braces). |
+| **Prompt variant** | A tweak of the same prompt for a **specific model** or **inference configuration**. |
+| **Prompt builder** | Console tool under **Build → Prompt Management** to author and test prompts. |
+| **Draft vs version** | Save work-in-progress as **draft**; **publish a version** for stable consumption by flows/APIs. |
+| **Deploy (prompt)** | Make a tested prompt configuration available for production use (paired with versioning in the demo). |
+| **System instructions** | Optional system-role text in the prompt template for additional steering. |
 
-So you can have these placeholders or variables within these prompts for some value. So for example, I could say, "Make me a music playlist for genre music with number of songs," and by just enclosing those variables with double curly braces graces, I can tell the prompt management system that these are placeholders for other values. So when I'm using this prompt within a larger application, I can obtain from the user somehow what genre they want, how many songs they want, and then I can pass that into this prompt, send that off to my foundation model to actually get that playlist back for them.
+### Key distinctions / comparisons
 
-## Prompt variants
+| Item | Notes |
+|---|---|
+| **Prompt management vs inline prompts** | Managed prompts give **version history**, **rollback**, and **ARN-based reuse**; inline strings are fine for experiments only. |
+| **Variables vs static prompts** | Variables turn a template into an **application-ready** artifact (genre, song count, customer name, etc.). |
+| **Variant vs version** | **Version** tracks evolution over time; **variant** targets different models/settings at the same logical prompt. |
+| **Prompt vs flow** | Prompt management stores **single templates**; [Bedrock Prompt Flows](../bedrock-prompt-flows/index.md) **chain** prompts, models, and knowledge bases. |
 
-Now, I can also have a prompt variant, so if I want to tweak that prompt for a specific model, or for specific inference configurations, or whatever, I can also have different variants of that prompt that are tuned for different foundation models or whatever it might be.
+### The problem (why you need it)
 
-## Prompt builder, tools, and flows
+- Teams reinvent the same prompts in every microservice, causing **drift** and inconsistent model behavior.
+- Prompt tuning is iterative; without versions you cannot **compare** or **roll back** safely.
+- Applications need **parameterized** prompts (user-supplied genre, counts, IDs) without string-concatenation bugs.
 
-Now, within the Bedrock console, we have a prompt builder tool to let us play with it, and we're gonna do that in a moment 'cause it'll make more sense when we see it, right? You can also associate tools and caching strategies with a specific prompt, and after we're done testing with it, we can deploy the prompt, and once a new prompt is deployed, we can use that within a flow. And Bedrock flows are ways of tying these prompts together and building larger applications out of them. So that's up next, but for now, let's do a quick demo and see how it works.
+### The solution
 
-## Console navigation
+1. Create a prompt in **Prompt Management** (name: letters, hyphens, underscores—**no spaces**).
+2. Author template text with `{{variable}}` placeholders and optional system instructions.
+3. Associate a **foundation model** and inference settings (max tokens, temperature, stop sequences).
+4. Supply **test values** for variables and run **in-console test** (uses selected model).
+5. **Save draft**, then **create version** / deploy for use in flows or the <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html">Converse API</a> (prompt ARN as `modelId` per AWS samples).
 
-Alright, just to make this a little bit more real, 'cause the slide didn't really convey it, let's take a look at the actual prompt management feature real quick. So I'm in the Bedrock console here, go down to Build and Prompt Management, and that's where it all starts. So create a prompt, test a prompt, use a prompt, sounds great, let's create one.
+### How to apply it
 
-## Creating a prompt
+**Console flow (lecture demo — music playlist):**
 
-All right, you need to give it a name. Now this can't have spaces or anything, so make sure that you only have letters and hyphens and underscores. So let's call it, I don't know let's do the example from the slides music playlist And you can give it a description if you want, that's a little bit more descriptive. generate a playlist. For a given genre. And a given number of songs. And if you want to have your own KMS key associated with it, you can, but I'm going to let Amazon manage that for me. Create.
+1. **Build → Prompt Management → Create prompt**
+2. Name: `music-playlist` (example); description optional; KMS optional.
+3. Prompt body example:
 
-## Writing the prompt
+```text
+Generate a playlist of {{genre}} songs with a total of {{number}} tracks.
+```
 
-And now I can actually make my actual prompt here. So cool. Let's open that up for system instructions too, if you want to give it a system prompt associated with it that's kind of guiding it further. You have that option here as well. let's give it a prompt. You can see here the format of double curly brackets for parameters, for variables. We'll use that. So again, we'll just say, "Generate a playlist of..." Genre. Music Or songs more specifically? With a total of Number, sounds.
+4. Select model (demo: Anthropic Claude Sonnet); tune max tokens / temperature if needed.
+5. Test with `genre = vocal jazz`, `number = 10`; run test in builder.
+6. Save draft → **Create version** (published v1) for downstream apps.
 
-## Model selection and configuration
+See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-code-ex.html">Prompt management code samples</a> for API usage.
 
-And now we need to associate that with a model of some sort, so we can associate that with a model or a larger agentic system if you want to as well. Let's stick with a model and select one. And I will use Anthropic, 'cause I like Claude, and I'm gonna go total overkill here and use Sonnet four point five for this. Apply. Alright. So we can see here we have some dials here, we can control the maximum output tokens here if we want to. We can add our own custom stop sequences, we can control the temperature of it.
+### Examples
 
-## Testing the prompt
+**1. Shared customer-email tone prompt**
 
-but most importantly, let's put in some test values here for the genre and number. So I will say, I don't know vocal jazz. And I want ten of them. And now I can actually test it within this prompt window, which is pretty cool 'cause I did select a model already, right? So let's go ahead and run it and see if it works. And obviously in the real world, I probably wanna give it a little bit more specific guidance there, but hey, these aren't bad. All solid choices, good job Claude.
+Marketing and support both reference the same **versioned** “brand voice” prompt; v2 tightens brevity without redeploying every Lambda.
 
-## Save, version, and deploy
+**2. Model-specific variants**
 
-Alright, so now that I've tested it, I can actually deploy that if I want to as well. And to do that, I can go ahead and, well, first of all, if I wanted to make a variant, I could do that too. I could create a version of it if I wanted to, like we talked about, or I can save it. Let's save that as draft. Alright, so now that I'm done building my prompt, let's go back to the level above that, and I can actually create a version and deploy this thing if I want to. So let's create a version. And I have put published version one. Alright, so now version one of my prompt is out there, and I can actually use that within my larger applications, like for example, in an Amazon Flow, which we'll talk about next.
+A `{{product_name}}` summary prompt keeps one logical ID but variants tune temperature for **Haiku** (cheap) vs **Sonnet** (quality).
+
+**3. Flow-ready playlist prompt**
+
+Published `music-playlist` v1 feeds the simple flow in [Bedrock Prompt Flows](../bedrock-prompt-flows/index.md)—genre and number passed as structured flow input.
+
+### Limitations / edge cases
+
+- **Naming rules** — Prompt resource names cannot include spaces (lecture emphasizes alphanumeric + `-` `_`).
+- **Guidance still matters** — A minimal template works in demos; production needs richer instructions (the lecture notes Claude’s playlist was “not bad” but could be more specific).
+- **Coupling** — Disassociate prompts from flows/agents before delete to avoid runtime errors (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-delete.html">delete guidance</a>).
+
+### Industry scenarios
+
+**1. Multi-team SaaS platform**
+
+A platform team owns **versioned** prompts for “release notes summarizer” and “changelog classifier”; product squads invoke by ARN with `{{repo}}` and `{{version}}`.
+
+**2. Regulated insurance correspondence**
+
+Compliance approves prompt **version 4**; claims apps pin to that version while v5 experiments stay in draft.
+
+**3. Retail personalization API**
+
+`{{customer_segment}}` and `{{locale}}` variables drive merchandising copy; variants per language model share one governance workflow.
+
+### Key takeaways
+
+- Prompt Management is for **reuse, versioning, and variables**—not just static text storage.
+- Use `{{variable}}` syntax so apps inject runtime values safely.
+- **Variants** handle per-model tuning; **versions** handle lifecycle and rollback.
+- Test in-console, then **publish versions** for flows and Converse-based apps.
+- Next step: wire saved prompts into [Bedrock Prompt Flows](../bedrock-prompt-flows/index.md).
+
+### References
+
+**In this repo**
+
+- [Bedrock Prompt Flows](../bedrock-prompt-flows/index.md)
+- [More Depth on the Bedrock Converse API](../more-depth-on-the-bedrock-converse-api/index.md)
+- [Intro to Prompt Engineering](../intro-to-prompt-engineering/index.md)
+- [Anatomy of a Prompt](../anatomy-of-a-prompt/index.md)
+
+**AWS documentation**
+
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-create.html">Create a prompt using Prompt management</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-test.html">Test a prompt using Prompt management</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-version-create.html">Create a version of a prompt</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-code-ex.html">Run Prompt management code samples</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html">Converse API</a>

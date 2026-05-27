@@ -1,29 +1,127 @@
 # Intro to Prompt Engineering
 
-## What is prompt engineering
+## Lecture notes
 
-You know, generative AI tends to say the word "delve" a lot for some reason, so let's delve into the world of prompt engineering, shall we? What is prompt engineering? Well, how you ask a generative AI system matters a lot, right? So when you're dealing with generative AI and chat applications in particular, you need to ask it for what you want, and how you ask matters. The more detailed you are, the better. The more the way you ask it can really influence the result that you get, and that's what we call prompt engineering, just the the art and science of asking the right way. To the AI.
+### What this lecture covers
 
-## Benefits of effective prompting
+**Prompt engineering** is the practice of asking generative AI systems **clearly and completely** so you get better, safer, and more capable results. The lecture defines core benefits, distinguishes “classic” prompting from **RAG** and **agents** (covered later with AWS services), and frames the goal as **quality in → quality out**.
 
-Some of the benefits of effective prompting include boosting the model's abilities and improving safety. So by asking things the right way again, you can get better results out of the model and maybe get it to do things you didn't think it could do. And if you ask just the right way, you can also improve safety. You can prevent it from telling you to do the wrong thing, you can tell it to not leak sensitive information, things like that, if you just make sure you specify that in your prompt.
+### Key definitions (from the lecture)
 
-## Augmenting the model with domain knowledge
+| Term | Definition |
+|---|---|
+| **Prompt engineering** | The art and science of **how you phrase requests** to generative AI—detail and structure materially change outputs. |
+| **Generative AI / chat applications** | Interactive systems where the user’s **wording** steers the model each turn. |
+| **Retrieval-Augmented Generation (RAG)** | Augmenting prompts with **retrieved context** from your documents/vector store before the model answers (see [RAG](../retrieval-augmented-generation-rag/index.md)). |
+| **LLM agents** | Systems that combine prompts with **tools** and multi-step reasoning to act on external data/services. |
+| **Domain knowledge augmentation** | Supplying proprietary facts via retrieval or tools **without fine-tuning** model weights. |
+| **External tools** | Functions/APIs (weather, internal CRM, MCP servers) the model may call when the prompt ecosystem exposes them. |
+| **Garbage in, garbage out** | Poor prompts → poor answers; strong prompts → higher-quality outputs. |
 
-It also allows you to augment the model with domain knowledge and external tools without changing the model parameters or fine-tuning. Now, this is getting a little bit into a gray area of what I would call prompt engineering. What they're talking about here are specific techniques like re retrieval augmented generation, or RAG for short, and LLM agents. And I'm gonna talk about that later on in the course in the context of Amazon services for generative AI, because it'll make more sense there. But what they're talking about here is basically at a high level, taking your own documents, your own databases, your own data stores, storing that in a very specific way that's friendly to generative AI, and then using that to retrieve contextual information about your question and including that in the prompt before it sends it into the actual large language model or what have you. So in a way, it's cheating, you know, it's taking your original prompt, looking up relevant information from an external data store, and then combining all that together into a final prompt that's actually fed into the, the model itself.
+### Key distinctions / comparisons
 
-## External tools and capabilities
+| Item | Notes |
+|---|---|
+| **Prompt engineering vs fine-tuning** | Prompting (and RAG/tools) augments behavior **without changing weights**; fine-tuning updates the model itself ([Fine-Tuning in Bedrock](../fine-tuning-foundation-models-in-bedrock/index.md)). |
+| **Classic prompting vs RAG** | Classic = what you write in the message; RAG = **lookup + inject context** from your data stores first. |
+| **Prompting vs agents** | Agents add **tool loops** and orchestration; AWS course material groups them under broad “prompt engineering” but implementation is taught with Bedrock services later. |
+| **Safety via prompting vs guardrails** | Prompts can instruct “don’t leak secrets”; [Bedrock Guardrails](../bedrock-guardrails/index.md) enforce policies systematically. |
 
-When we talk about external tools, it's a similar idea but a little bit different. So in addition to having external information, we might have external functions or capabilities that we introduce into the system. So we can tell through the prompt or the set of prompts that the system has, "Hey, I want you to answer this question, and by the way, if you need to figure out what the current weather is in this given city, you can use this bit of code over here to do so, and that will allow you to access some external service to get that information." Or if I need to like retrieve some internal information through an internal service here's a function you can call to actually get that information in real time. And under the hood, the AI can actually go back and forth and say, "Okay, this person is asking for this information, I have this tool at my disposal that might be useful, let's go get some information from that tool as well, and then combine all these responses together into a final response."
+### The problem (why you need it)
 
-## RAG, agents, and AWS training scope
+- The same model can appear brilliant or useless depending on **how the question is asked**.
+- Vague prompts waste tokens, confuse users, and increase **unsafe or off-topic** answers.
+- Teams need a shared discipline before diving into RAG, agents, and managed prompts.
 
-Again, I'm not sure I would call that prompt engineering, but they do lump that under this category in the AWS training material. I'm personally going to put that That off until we talk about the actual service implementation because I think it will make more sense, but that's what this is touching on: retrieval augmented generation and LLM agents.
+### The solution (benefits of effective prompting)
 
-## Exploring model capabilities
+| Benefit | How prompting helps |
+|---|---|
+| **Boost model abilities** | Detailed instructions unlock tasks the model seemed unable to do with terse prompts. |
+| **Improve safety** | Explicit rules (“do not provide medical advice”, “redact secrets”) steer behavior before infrastructure guardrails. |
+| **Augment with domain knowledge** | RAG/agents inject **your** documents and live data without retraining. |
+| **Explore capabilities** | Experimentation reveals strengths/weaknesses of each model generation. |
+| **Better outputs** | Higher-quality inputs raise answer quality (inverse of garbage in/out). |
 
-Another benefit of effective prompting, and this is getting back to just plain old prompt engineering, in my opinion interacting with language models just to grasp their full capabilities. So sometimes you just gotta play around with them to figure out what they can do, what they're good at, and what they're not so good at, right?
+### How RAG and agents relate (high level)
 
-## Quality inputs and outputs
+**RAG (lecture mental model):**
 
-And obviously the end result, what we're trying to do, is achieve better quality outputs from our AI system through better quality inputs. So garbage in, garbage out, the converse is true, you know, if you put in a good prompt, you're much more likely to get a good answer from a generative AI system.
+```
+User question
+    → retrieve relevant chunks from vector store
+    → build augmented prompt (question + context)
+    → foundation model → answer grounded in your data
+```
+
+**Agents / tools (lecture mental model):**
+
+```
+User question
+    → model decides a tool might help (weather API, internal lookup)
+    → tool executes → results folded into final answer
+```
+
+The instructor defers **service-level implementation** to later lectures ([Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md), agents section) but introduces the concepts here because AWS training groups them under prompt engineering broadly.
+
+### Examples
+
+**1. Vague vs specific**
+
+- Weak: “Summarize this.”
+- Strong: “Summarize in three bullet points for an executive, under 100 words, focusing on risks and deadlines.”
+
+**2. Safety clause**
+
+“Answer using only the provided context; if unsure, say you don’t know”—reduces hallucination tendency before RAG/guardrails.
+
+**3. Tool-aware instruction**
+
+“If you need current weather, call the `get_weather` tool with city name; do not guess.”—sets expectations for agentic flows later.
+
+### Limitations / edge cases
+
+- **Prompting alone is not governance** — Production needs guardrails, validation, and monitoring.
+- **RAG/agents are not “pure” prompt engineering** — They are **system patterns** built around prompts; treat this lecture as conceptual framing.
+- **Model drift** — What works on one model/family may need retuning on another ([Prompt Best Practices](../prompt-best-practices/index.md), [Types of Prompts](../types-of-prompts/index.md)).
+
+### Industry scenarios
+
+**1. Legal contract review assistant**
+
+Lawyers use meticulously structured prompts for clause extraction; later RAG over firm precedents augments without fine-tuning a foundation model.
+
+**2. Retail chatbot MVP**
+
+Prompt engineering gets a workable prototype; the team later adds [Knowledge Bases](../bedrock-knowledge-bases/index.md) for catalog facts and guardrails for PII.
+
+**3. Field-service mobile agent**
+
+Technicians ask natural-language questions; agent prompts plus tool access pull parts inventory from SAP while keeping instructions to stay within approved repair steps.
+
+### Key takeaways
+
+- **How you ask matters**—prompt engineering is foundational for every GenAI app.
+- Benefits span **quality, safety, capability discovery**, and **domain augmentation** without fine-tuning.
+- **RAG** adds retrieved context; **agents** add tools—both extend prompting into full systems (detailed later on AWS).
+- Aim for **clear, detailed, contextual** prompts; avoid garbage in, garbage out.
+- Follow-on topics: [Anatomy of a Prompt](../anatomy-of-a-prompt/index.md), [Prompt Best Practices](../prompt-best-practices/index.md), [Enforcing Use of Structured Data](../enforcing-use-of-structured-data/index.md).
+
+### References
+
+**In this repo**
+
+- [Anatomy of a Prompt](../anatomy-of-a-prompt/index.md)
+- [Prompt Best Practices](../prompt-best-practices/index.md)
+- [Types of Prompts](../types-of-prompts/index.md)
+- [Retrieval-Augmented Generation (RAG)](../retrieval-augmented-generation-rag/index.md)
+- [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md)
+- [Amazon Bedrock Prompt Management](../amazon-bedrock-prompt-management/index.md)
+- [Bedrock Guardrails](../bedrock-guardrails/index.md)
+
+**AWS documentation**
+
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-engineering-guidelines.html">Prompt engineering concepts</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-prompt-engineering.html">What is prompt engineering?</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Knowledge Bases for Amazon Bedrock</a>
+- <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html">Converse API</a>
