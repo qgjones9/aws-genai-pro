@@ -60,4 +60,3 @@
 | [S3 Access Logs](56-s3-access-logs/index.md) | Logging S3 access requests for audit and analysis. |
 | [S3 Access Logs - Hands On](57-s3-access-logs-hands-on/index.md) | Hands-on practice configuring S3 access logs. |
 | [S3 Access Points](58-s3-access-points/index.md) | Named network endpoints with dedicated access policies for S3. |
-| [Quiz: Managing Data for Generative AI](59-quiz-managing-data-for-generative-ai/index.md) | Practice questions on managing data for generative AI. |
