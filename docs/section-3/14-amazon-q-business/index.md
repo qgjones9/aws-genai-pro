@@ -190,6 +190,7 @@ sequenceDiagram
 
 ## External References
 
+- <a href="https://www.udemy.com/course/ultimate-aws-certified-generative-ai-developer-professional/learn/lecture/53642249#overview">Amazon Q Business</a>
 - <a href="https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/what-is.html">What is Amazon Q Business?</a>
 - <a href="https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/how-it-works.html">How Amazon Q Business works</a>
 - <a href="https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/connectors-list.html">Supported connectors</a>
