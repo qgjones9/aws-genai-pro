@@ -1,0 +1,51 @@
+/* AWS brand palette — Material for MkDocs custom scheme */
+
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: #ff9900;
+  --md-primary-fg-color--light: #ffb84d;
+  --md-primary-fg-color--dark: #e88b00;
+  --md-primary-bg-color: #ffffff;
+  --md-accent-fg-color: #146eb4;
+  --md-accent-fg-color--transparent: #146eb41a;
+  --md-default-fg-color: #000000;
+  --md-default-fg-color--light: #232f3e;
+  --md-default-fg-color--lighter: #545b64;
+  --md-default-bg-color: #fafafa;
+  --md-default-bg-color--light: #f2f3f3;
+  --md-default-bg-color--lighter: #eaeded;
+  --md-typeset-a-color: #146eb4;
+  --md-footer-bg-color: #232f3e;
+  --md-footer-bg-color--dark: #1a222d;
+  --md-footer-fg-color: #ffffff;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #ff9900;
+  --md-primary-fg-color--light: #ffb84d;
+  --md-primary-fg-color--dark: #e88b00;
+  --md-primary-bg-color: #232f3e;
+  --md-accent-fg-color: #146eb4;
+  --md-accent-fg-color--transparent: #146eb433;
+  --md-default-fg-color: #ffffff;
+  --md-default-fg-color--light: #d5dbdb;
+  --md-default-fg-color--lighter: #aab7b8;
+  --md-default-bg-color: #232f3e;
+  --md-default-bg-color--light: #1e2733;
+  --md-default-bg-color--lighter: #19212b;
+  --md-code-bg-color: #1a222d;
+  --md-typeset-a-color: #66b3e0;
+  --md-footer-bg-color: #161d26;
+  --md-footer-bg-color--dark: #0f1419;
+  --md-footer-fg-color: #ffffff;
+}
+
+/* Navigation bar — Squid Ink in both modes */
+[data-md-color-scheme="default"] .md-header,
+[data-md-color-scheme="default"] .md-tabs {
+  background-color: #232f3e;
+}
+
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #161d26;
+}

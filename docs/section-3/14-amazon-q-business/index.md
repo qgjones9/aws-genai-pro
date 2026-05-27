@@ -1,4 +1,7 @@
-# Amazon Q Business
+# :material-office-building: Amazon Q Business
+
+!!! info "vs custom Bedrock apps"
+    Q Business is **fully managed** employee Q&A over **enterprise connectors**—you do not pick the underlying FM. Custom **Bedrock** apps offer more control (model choice, agents, knowledge bases).
 
 ## What this lecture covers
 

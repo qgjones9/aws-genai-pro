@@ -1,4 +1,7 @@
-# Amazon S3 Vectors
+# :material-cloud: Amazon S3 Vectors
+
+!!! tip "💡 Cost tiering"
+    S3 Vectors targets **up to ~90% lower cost** than traditional vector DBs with **sub-second** search—ideal for **low-volume “cold tenant”** tiers; pair with OpenSearch for hot, high-QPS workloads.
 
 ## Amazon S3 Vectors overview
 

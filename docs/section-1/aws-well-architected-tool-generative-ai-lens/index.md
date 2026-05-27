@@ -66,7 +66,8 @@ flowchart LR
   F --> A
 ```
 
-**Exam tip:** “Put these five steps in order” style questions often mirror this lifecycle—verify against the current lens text if AWS reorders wording.
+!!! tip "Exam tip"
+    “Put these steps in order” questions often mirror this lifecycle—verify against the current [Generative AI Lens](https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html) text if AWS reorders wording.
 
 ## Examples
 

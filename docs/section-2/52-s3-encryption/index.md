@@ -1,4 +1,4 @@
-# S3 Encryption
+# :material-lock: S3 Encryption
 
 ## What this lecture covers
 
@@ -23,6 +23,9 @@ How to <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingEncry
 | **SSE-KMS** | You (via KMS CMK) | S3 server-side | Need **KMS permissions** to read; **CloudTrail** audit; watch **KMS API quotas** |
 | **SSE-C** | You (outside AWS) | S3 server-side | Key in **HTTP headers** every request; **HTTPS required**; S3 discards key after use |
 | **Client-side** | You (client) | Client before/after S3 | Plaintext never leaves your app unencrypted; use **client encryption libraries** |
+
+!!! info "🔒 Encryption in transit"
+    Use **HTTPS/TLS** for data in flight. A bucket policy can **deny** `aws:SecureTransport` false to block plain HTTP—pair with SSE at rest for defense in depth.
 
 ## SSE-S3 (Amazon S3 managed keys)
 

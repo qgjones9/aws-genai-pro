@@ -1,4 +1,4 @@
-# Humans in the Loop
+# :material-account-supervisor: Humans in the Loop
 
 ## What this lecture covers
 
@@ -30,6 +30,9 @@ This lecture explains **human-in-the-loop (HITL)** as a way to extend generative
 - Autonomous agents can **go off the rails** on edge cases; without escalation, users get stuck in loops or receive low-quality answers.
 - Pure automation gives you **no signal** about which model variant actually makes humans happy—you need structured feedback to compare options.
 - Collecting preferences can **backfire** if reward signals are misaligned (the lecture cites periods of overly **sycophantic** chatbot behavior when human-feedback tuning went sideways).
+
+!!! warning "Misaligned feedback"
+    Human preference tuning can push models toward **sycophantic** or over-agreeable behavior if rewards reward flattery over accuracy—design escalation and evaluation metrics carefully.
 
 ## HITL at the consumption layer
 

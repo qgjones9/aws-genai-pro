@@ -1,4 +1,4 @@
-# S3 Access Points
+# :material-folder-lock: S3 Access Points
 
 ## What this lecture covers
 
@@ -13,6 +13,9 @@
 | **Network origin** | Where requests to the access point may come from: **Internet** (public endpoint) or **VPC** (requests must originate from the specified VPC). Set at **create** time; you cannot change it later (AWS docs). See <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-vpc.html">Creating access points restricted to a virtual private cloud</a>. |
 | **VPC endpoint (for S3)** | A gateway in your VPC that lets resources (for example an EC2 instance) reach S3 **without traversing the public internet**. Required to use **VPC-origin** access points from inside the VPC (lecture). See <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-s3.html">Gateway endpoints for Amazon S3</a>. |
 | **VPC endpoint policy** | A policy on the VPC endpoint that controls which S3 resources principals in the VPC may call. For access-point traffic it must allow both the **access point** and the **underlying bucket** (lecture and AWS docs). See <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-endpoints-access.html">Control access to VPC endpoints using endpoint policies</a>. |
+
+!!! warning "🔒 VPC origin is immutable"
+    **Network origin** (Internet vs VPC) is chosen at access point **creation** and **cannot be changed** later. Plan VPC endpoints and endpoint policies before production cutover.
 
 ## Key distinctions / comparisons
 

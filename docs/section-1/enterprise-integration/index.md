@@ -1,4 +1,7 @@
-# Enterprise Integration
+# :material-domain: Enterprise Integration
+
+!!! tip "Exam patterns"
+    Know **knowledge bases** for internal docs, **cross-account OpenSearch connectors + IAM**, and **SQS/Kafka buffers** so AWS events are not lost when external CRM or ticketing systems are down.
 
 ## What this lecture covers
 

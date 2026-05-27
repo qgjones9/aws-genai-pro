@@ -35,6 +35,9 @@ A console walkthrough to create a Bedrock **vector store knowledge base**, inges
 - Learners need a **repeatable lab** that mirrors exam-relevant defaults (OpenSearch Serverless, sync, test, citations).
 - **Cost traps**: leaving OpenSearch Serverless running after KB deletion.
 
+!!! warning "Cleanup after the lab"
+    KB deletion removes indexed **data** by default but may leave the **OpenSearch Serverless collection** running. See [Really, don't leave OpenSearch up and running for long!](../really-dont-leave-opensearch-up-and-running-for-long/index.md).
+
 ## The solution
 
 Console workflow (Bedrock → Build → Knowledge bases):

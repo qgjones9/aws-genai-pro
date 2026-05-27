@@ -1,4 +1,7 @@
-# Bedrock Guardrails
+# :material-shield-check: Bedrock Guardrails
+
+!!! info "🔒 Exam focus"
+    Guardrails filter **prompts and responses** for knowledge bases, agents, and direct inference—know **word vs topic** filters, **PII block vs mask**, and **grounding vs relevance** checks.
 
 ## Lecture notes
 

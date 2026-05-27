@@ -1,5 +1,8 @@
 # Really, don't leave OpenSearch up and running for long!
 
+!!! danger "💰 Cost warning"
+    Deleting a Bedrock **knowledge base** does **not** remove the underlying **OpenSearch Serverless collection**. An idle collection can bill on the order of **~$200/month** even with zero traffic—delete the collection in the OpenSearch Serverless console when labs are done.
+
 ## What this lecture covers
 
 A cost and cleanup warning for learners who built a Bedrock knowledge base on **OpenSearch Serverless** in the prior hands-on lab: deleting the knowledge base does **not** remove the underlying vector store collection, and an idle collection can still bill on the order of **$200/month**.

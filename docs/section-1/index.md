@@ -1,4 +1,4 @@
-# Section 1: Generative AI Fundamentals and Bedrock
+# :material-robot: Section 1: Generative AI Fundamentals and Bedrock
 
 | Lecture Title | Lecture Description |
 |--------------|--------------------|

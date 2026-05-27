@@ -1,4 +1,4 @@
-# Section 2: Managing Data for Generative AI
+# :material-database: Section 2: Managing Data for Generative AI
 
 | Lecture Title | Lecture Description |
 |--------------|--------------------|

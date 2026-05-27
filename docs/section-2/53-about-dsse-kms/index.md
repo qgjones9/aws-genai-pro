@@ -1,5 +1,8 @@
 # About DSSE-KMS
 
+!!! example "Next hands-on"
+    You may see **DSSE-KMS** (dual-layer SSE with KMS) in the upcoming S3 encryption lab—**two AES-256 layers** vs one for SSE-KMS. The course treats it as awareness unless the exam blueprint adds it.
+
 ## Lecture notes
 
 ### What this lecture covers

@@ -2,16 +2,16 @@
 
 * [Course Resources](https://www.sundog-education.com/ultimate-aws-certified-generative-ai-developer-professional-course-materials/)
 
-## Course Overview
+## :material-school: Course Overview
 
 The course follows a **fundamentals-first** path through the <a href="https://docs.aws.amazon.com/aws-certification/latest/ai-professional-01/ai-professional-01.html">AWS Certified Generative AI Developer - Professional (AIP-C01)</a> exam scope. Sections build on each other rather than mirroring exam domains one-for-one (which would repeat overlapping material).
 
 | Section | Topic | Highlights |
 |---|---|---|
-| [Section 1](section-1/index.md) | Generative AI fundamentals and Bedrock | Foundation models, fine-tuning, RAG, knowledge bases, guardrails, prompt engineering, prompt flows, enterprise integration |
-| [Section 2](section-2/index.md) | Managing data for generative AI | Bedrock Data Automation, SageMaker Data Wrangler, Glue, Transcribe, Comprehend, OpenSearch, RDS/Aurora, DynamoDB, S3 |
-| [Section 3](section-3/index.md) | Agentic AI | Bedrock agents, multi-agent workflows, Strands Agents, AgentCore, humans in the loop, Amazon Q |
-| [Section 4](section-4/index.md) | Operational efficiency and optimization | Token efficiency, model selection, throughput, caching, resilient architectures, cross-Region inference |
+| :material-robot: [Section 1](section-1/index.md) | Generative AI fundamentals and Bedrock | Foundation models, fine-tuning, RAG, knowledge bases, guardrails, prompt engineering, prompt flows, enterprise integration |
+| :material-database: [Section 2](section-2/index.md) | Managing data for generative AI | Bedrock Data Automation, SageMaker Data Wrangler, Glue, Transcribe, Comprehend, OpenSearch, RDS/Aurora, DynamoDB, S3 |
+| :material-account-group: [Section 3](section-3/index.md) | Agentic AI | Bedrock agents, multi-agent workflows, Strands Agents, AgentCore, humans in the loop, Amazon Q |
+| :material-speedometer: [Section 4](section-4/index.md) | Operational efficiency and optimization | Token efficiency, model selection, throughput, caching, resilient architectures, cross-Region inference |
 | [Section 5](section-5/index.md) | Managing models with SageMaker AI | Processing, training, deployment, Ground Truth, Model Monitor, Clarify, registry, lineage, Neo, pipelines |
 | [Section 6](section-6/index.md) | More tools for building AI apps | Lambda, API Gateway, Step Functions, EventBridge, DevOps tools, AppSync, Outposts, Wavelength, Amplify |
 | [Section 7](section-7/index.md) | Governance and QA | Prompt management, agent tracing, evaluation, responsible AI, CloudWatch, CloudTrail, X-Ray, Lake Formation |
@@ -189,7 +189,10 @@ Many in-scope services are **not GenAI-specific** but appear in scenario questio
 | **Professional vs Associate ML Engineer** | The <a href="https://docs.aws.amazon.com/aws-certification/latest/machine-learning-engineer-associate-01/machine-learning-engineer-associate-01.html">AWS Certified Machine Learning Engineer - Associate (MLA-C01)</a> is the closest prior cert and extra helpful background. |
 | **In scope vs helpful background** | Data engineering is **officially out of scope**, but pipeline knowledge helps you reason about scenario answers. |
 
-## What to expect on the exam
+## :material-certificate: What to expect on the exam
+
+!!! tip "Exam mindset"
+    Questions are **scenario-driven**: pick the best architecture or implementation, not isolated trivia. Integration thinking and trade-offs (cost, latency, security, accuracy) matter more than service name recall.
 
 - **Scenario-driven**, not trivia: complex requirements where you pick the **best** architecture or implementation
 - **Integration thinking**: understand how services fit together, not just what each service is called
@@ -216,7 +219,8 @@ Helpful prior learning:
 - <a href="https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01.html">AWS Certified AI Practitioner (AIF-C01)</a> for business-oriented AI context
 - Machine Learning Engineer Associate for the closest technical overlap
 
-**Note:** Some appendix content in this course is reused from other Sundog certification prep courses—mostly in the later service-review sections.
+!!! note "Appendix content"
+    Some appendix content in this course is reused from other Sundog certification prep courses—mostly in the later service-review sections.
 
 ## Key takeaways
 

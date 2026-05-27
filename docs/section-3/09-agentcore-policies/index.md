@@ -170,7 +170,8 @@ Typical setup path from the lecture:
 4. **Choose enforcement mode** — start with **`LOG_ONLY`**, observe decisions, then **`ENFORCE`**.
 5. **Observe behavior** — review allow/deny outcomes via gateway/policy observability.
 
-**Cross-region note:** Policy authoring (natural-language generation) may use <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/cross-region-inference.html">cross-region inference</a> within your geography—the console warns that **prompts and results may be processed outside your home region** (data at rest stays in the origin region). Confirm this meets your **regulatory and residency** requirements before use.
+!!! warning "Cross-Region inference"
+    Policy authoring (natural-language generation) may use <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/cross-region-inference.html">cross-region inference</a> within your geography—the console warns that **prompts and results may be processed outside your home region** (data at rest stays in the origin region). Confirm this meets **regulatory and residency** requirements before use.
 
 ## Code-based setup (alternative to console)
 

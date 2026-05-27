@@ -74,7 +74,9 @@ Bedrock-specific chunking controls are detailed in [Managing Chunking Strategies
 ## Limitations / edge cases
 
 - Chunking strategy is described as an **art**, not one correct setting.
-- **Semantic chunking** cost and latency scale with corpus size.
+!!! warning "Semantic chunking cost"
+    **Semantic chunking** runs content through a foundation model—**cost and latency scale** with corpus size; use when quality gains justify FM spend.
+
 - Very large context windows reduce hard failures but **too much context** can still confuse models.
 - Exam expects deeper retrieval knowledge than console defaults alone.
 

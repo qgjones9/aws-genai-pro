@@ -8,6 +8,9 @@ By analyzing the notes, we can map the specific features mentioned—like Manage
 
 ### 1. The Cost Trap: "Managed vs. Serverless" for Multi-Tenancy
 
+!!! warning "💰 Managed domain idle cost"
+    **Managed OpenSearch domains** bill for instance hours **even when idle**. For low-traffic tenants, **OpenSearch Serverless** scales usage down and avoids paying for always-on clusters you rarely query.
+
 **The Lecture Note Fact:** Managed OpenSearch domains charge you for instance hours *even if they sit there idle doing nothing*. However, there is a "fully serverless option now" where you don't think about underlying servers.
 
 * **The Business Scenario:** When launching a SaaS, you will have small business clients who only get 5 or 10 calls a day. If you spin up a dedicated *Managed OpenSearch Domain* for every single client, your baseline AWS bill will destroy your profit margins because those clusters will sit idle 95% of the day.

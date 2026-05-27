@@ -1,5 +1,8 @@
 site_name: AWS GenAI Pro
 site_description: Notes and reference for AWS generative AI professional certification
+site_url: https://qgjones9.github.io/aws-genai-pro/
+repo_url: https://github.com/qgjones9/aws-genai-pro
+repo_name: qgjones9/aws-genai-pro
 
 docs_dir: docs
 site_dir: site
@@ -137,25 +140,32 @@ nav:
     - Section 18: section-18/index.md
     - Section 19: section-19/index.md
 
+extra_css:
+  - stylesheets/extra.css
+
 theme:
   name: material
   palette:
     - scheme: slate
-      primary: teal
-      accent: orange
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
     - scheme: default
-      primary: teal
-      accent: orange
+      primary: custom
+      accent: custom
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
   features:
     - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
     - navigation.tracking
     - navigation.tabs
+    - navigation.path
+    - navigation.footer
     - content.code.copy
     - search.suggest
     - search.highlight
@@ -165,7 +175,15 @@ plugins:
 
 markdown_extensions:
   - admonition
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid

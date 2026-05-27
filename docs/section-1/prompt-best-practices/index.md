@@ -1,5 +1,8 @@
 # Prompt Best Practices
 
+!!! tip "Quick wins"
+    Be **concise**, add **context**, put **format constraints at the end** of the prompt, prefer **questions** when appropriate, and use **few-shot examples** plus **chain-of-thought** for harder reasoning tasks.
+
 ## What this lecture covers
 
 Amazon’s recommended **prompt engineering** habits: write clearly, add context, specify response shape, place format constraints at the **end** of the prompt, ask questions when possible, supply **examples**, decompose hard work, use **chain-of-thought** when needed, and **experiment** because models are non-deterministic and evolving.

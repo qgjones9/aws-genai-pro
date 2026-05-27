@@ -1,5 +1,8 @@
 # A quick note on model access
 
+!!! warning "Hands-on prerequisites"
+    Bedrock labs require a **paid account** (no Free Tier for this course), **billing alarms**, and often an **Anthropic use-case** submission in Model Catalog. Some learners hit **zero on-demand quota** until AWS Support raises limits.
+
 ## What this lecture covers
 
 Administrative prerequisites before hands-on Bedrock work: **model access** (especially Anthropic), **no free tier** for Bedrock in this course, and **quota / throttling** issues some learners hit.

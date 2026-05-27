@@ -1,4 +1,4 @@
-# Agentic AI
+# :material-account-group: Agentic AI
 
 | Lecture Title | Lecture Description |
 |--------------|--------------------|

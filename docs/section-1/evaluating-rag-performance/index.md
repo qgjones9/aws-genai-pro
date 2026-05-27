@@ -1,5 +1,8 @@
 # Evaluating RAG Performance
 
+!!! tip "RAG triad (exam)"
+    Measure each leg: **context relevance** (retrieval), **groundedness** (answer vs context), and **answer relevance** (answer vs query). Bedrock evaluations often use an **LLM-as-judge** with optional **reference contexts** in ground-truth JSON.
+
 ## What this lecture covers
 
 How to measure whether a Bedrock **RAG / knowledge base / agent** system is performing well: the **RAG triad** metrics on each edge (context relevance, groundedness, answer relevance), Bedrock’s **subjective** evaluation dimensions, **ground-truth datasets**, and **LLM-as-a-judge** with optional multiple evaluator models.

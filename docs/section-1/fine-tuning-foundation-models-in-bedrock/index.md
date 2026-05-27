@@ -66,7 +66,9 @@ model_id = "your-custom-model-identifier"
 ## Limitations / edge cases
 
 - **Not all models** support fine-tuning—check the model card first.
-- **Cost and duration** are high; many teams start with RAG or prompt engineering.
+!!! tip "Cost vs alternatives"
+    **Cost and duration** are high—many teams start with **RAG** or **prompt engineering** before fine-tuning or continued pre-training.
+
 - Continued pre-training and custom models can both get **expensive and time-consuming**; course has no hands-on for continued pre-training.
 - Image and text paths differ; Titan and other families mentioned as examples—catalog evolves.
 

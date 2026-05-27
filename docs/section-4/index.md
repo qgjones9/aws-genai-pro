@@ -1,4 +1,4 @@
-# Section 4
+# :material-speedometer: Section 4: Operational Efficiency and Optimization
 
 | Lecture Title | Lecture Description |
 |--------------|--------------------|
