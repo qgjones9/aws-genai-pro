@@ -207,7 +207,6 @@ A staging environment needs a full reset before load tests. Ops uses **DeleteTab
 **In this repo**
 
 - [Amazon DynamoDB](../32-amazon-dynamodb/index.md)
-- [Amazon DynamoDB - Hands On](../33-amazon-dynamodb-hands-on/index.md)
 - [Amazon DynamoDB - WCU & RCU](../34-amazon-dynamodb-wcu-and-rcu/index.md)
 - [Amazon DynamoDB - Basic APIs - Hands On](../37-amazon-dynamodb-basic-apis-hands-on/index.md)
 

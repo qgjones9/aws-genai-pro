@@ -9,26 +9,133 @@ watch:
   - mkdocs.yml
 
 nav:
-  - Home: index.md
-  - Section 1: section-1/index.md
-  - Section 2: section-2/index.md
-  - Section 3: section-3/index.md
-  - Section 4: section-4/index.md
-  - Section 5: section-5/index.md
-  - Section 6: section-6/index.md
-  - Section 7: section-7/index.md
-  - Section 8: section-8/index.md
-  - Section 9: section-9/index.md
-  - Section 10: section-10/index.md
-  - Section 11: section-11/index.md
-  - Section 12: section-12/index.md
-  - Section 13: section-13/index.md
-  - Section 14: section-14/index.md
-  - Section 15: section-15/index.md
-  - Section 16: section-16/index.md
-  - Section 17: section-17/index.md
-  - Section 18: section-18/index.md
-  - Section 19: section-19/index.md
+  - AWS GenAI Pro:
+    - Home: index.md
+    - GenAI Fundamentals and Bedrock: 
+      - GenAI Fundamentals and Bedrock: section-1/index.md
+      - Section Intro: section-1/section-intro/index.md
+      - Amazon Bedrock Overview: section-1/amazon-bedrock-overview/index.md
+      - A quick note on model access: section-1/a-quick-note-on-model-access/index.md
+      - Hands-On with the Bedrock Playground: section-1/hands-on-with-the-bedrock-playground/index.md
+      - More Depth on the Bedrock Converse API: section-1/more-depth-on-the-bedrock-converse-api/index.md
+      - Fine-Tuning Foundation Models in Bedrock: section-1/fine-tuning-foundation-models-in-bedrock/index.md
+      - Low-Rank Adaptation (LoRA) - How Fine-Tuning Works: section-1/low-rank-adaptation-lora-how-fine-tuning-works/index.md
+      - Retrieval-Augmented Generation (RAG): section-1/retrieval-augmented-generation-rag/index.md
+      - Vector Stores and Semantic Search: section-1/vector-stores-and-semantic-search/index.md
+      - Bedrock Knowledge Bases: section-1/bedrock-knowledge-bases/index.md
+      - Hands-On with Knowledge Bases: section-1/hands-on-with-knowledge-bases/index.md
+      - Really, don't leave OpenSearch up and running for long!: section-1/really-dont-leave-opensearch-up-and-running-for-long/index.md
+      - Pre-Retrieval and Chunking Strategies: section-1/pre-retrieval-and-chunking-strategies/index.md
+      - Managing Chunking Strategies with Bedrock: section-1/managing-chunking-strategies-with-bedrock/index.md
+      - Optimizing your Vector Store and Embeddings: section-1/optimizing-your-vector-store-and-embeddings/index.md
+      - Evaluating RAG Performance: section-1/evaluating-rag-performance/index.md
+      - Mulitmodal Models and Pipelines with Bedrock: section-1/mulitmodal-models-and-pipelines-with-bedrock/index.md
+      - Bedrock Guardrails: section-1/bedrock-guardrails/index.md
+      - Bedrock Guardrails Automated Reasoning Checks: section-1/bedrock-guardrails-automated-reasoning-checks/index.md
+      - Hands-On with Bedrock Guardrails: section-1/hands-on-with-bedrock-guardrails/index.md
+      - Token-Level Redaction: section-1/token-level-redaction/index.md
+      - Amazon Bedrock Prompt Management: section-1/amazon-bedrock-prompt-management/index.md
+      - Bedrock Prompt Flows: section-1/bedrock-prompt-flows/index.md
+      - Enforcing Use of Structured Data: section-1/enforcing-use-of-structured-data/index.md
+      - Intro to Prompt Engineering: section-1/intro-to-prompt-engineering/index.md
+      - Anatomy of a Prompt: section-1/anatomy-of-a-prompt/index.md
+      - Prompt Best Practices: section-1/prompt-best-practices/index.md
+      - Types of Prompts: section-1/types-of-prompts/index.md
+      - Prompt Misuse and Mitigating Bias: section-1/prompt-misuse-and-mitigating-bias/index.md
+      - Enterprise Integration: section-1/enterprise-integration/index.md
+      - AWS Well-Architected Tool Generative AI Lens: section-1/aws-well-architected-tool-generative-ai-lens/index.md
+      - "Quiz: Bedrock and GenAI Fundamentals": section-1/quiz-bedrock-and-genai-fundamentals/index.md
+    - Managing Data for Generative AI:
+      - Managing Data for Generative AI: section-2/index.md
+      - Dealing with Structured Data: section-2/02-dealing-with-structured-data/index.md
+      - Amazon Bedrock Data Automation: section-2/03-amazon-bedrock-data-automation/index.md
+      - SageMaker Data Wrangler: section-2/04-sagemaker-data-wrangler/index.md
+      - "NOTICE: Data Wrangler can be hard to find": section-2/05-notice-data-wrangler-can-be-hard-to-find/index.md
+      - "Demo: SageMaker Studio, Canvas, and Data Wrangler": section-2/06-demo-sagemaker-studio-canvas-and-data-wrangler/index.md
+      - AWS Glue: section-2/07-aws-glue/index.md
+      - AWS Glue Studio: section-2/08-aws-glue-studio/index.md
+      - Glue Data Quality: section-2/09-glue-data-quality/index.md
+      - CloudWatch Metrics: section-2/10-cloudwatch-metrics/index.md
+      - AWS Transcribe: section-2/11-aws-transcribe/index.md
+      - Amazon Comprehend: section-2/13-amazon-comprehend/index.md
+      - Using Comprehend, Lambda, and Bedrock together: section-2/15-using-comprehend-lambda-and-bedrock-together/index.md
+      - Amazon Comprehend Medical: section-2/16-amazon-comprehend-medical/index.md
+      - Intro to OpenSearch in GenAI: section-2/17-intro-to-opensearch-in-genai/index.md
+      - Introducing Amazon OpenSearch Service (part 1): section-2/18-introducing-amazon-opensearch-service-part-1/index.md
+      - Introducing Amazon OpenSearch Service (part 2): section-2/19-introducing-amazon-opensearch-service-part-2/index.md
+      - OpenSearch Index Management and Designing for Stability: section-2/20-opensearch-index-management-and-designing-for-stability/index.md
+      - Amazon OpenSearch Service Performance: section-2/21-amazon-opensearch-service-performance/index.md
+      - Amazon OpenSearch Serverless: section-2/22-amazon-opensearch-serverless/index.md
+      - Using and Tuning OpenSearch as a Vector Store: section-2/23-using-and-tuning-opensearch-as-a-vector-store/index.md
+      - Amazon S3 Vectors: section-2/24-amazon-s3-vectors/index.md
+      - Amazon RDS: section-2/26-amazon-rds/index.md
+      - Amazon RDS with S3 Document Repositories: section-2/28-amazon-rds-with-s3-document-repositories/index.md
+      - Amazon Aurora: section-2/29-amazon-aurora/index.md
+      - Amazon Aurora and the pgvector Extension: section-2/31-amazon-aurora-and-the-pgvector-extension/index.md
+      - Amazon DynamoDB: section-2/32-amazon-dynamodb/index.md
+      - Amazon DynamoDB - WCU & RCU: section-2/34-amazon-dynamodb-wcu-and-rcu/index.md
+      - Amazon DynamoDB - Basic APIs: section-2/36-amazon-dynamodb-basic-apis/index.md
+      - Amazon DynamoDB - Basic APIs - Hands On: section-2/37-amazon-dynamodb-basic-apis-hands-on/index.md
+      - Amazon DynamoDB DAX: section-2/38-amazon-dynamodb-dax/index.md
+      - Amazon DynamoDB - TTL: section-2/40-amazon-dynamodb-ttl/index.md
+      - DynamoDB and Generative AI: section-2/41-dynamodb-and-generative-ai/index.md
+      - Keeping your Vector Store Up to Date: section-2/42-keeping-your-vector-store-up-to-date/index.md
+      - Re-Ranker Modules in Bedrock: section-2/43-re-ranker-modules-in-bedrock/index.md
+      - Amazon S3 - Storage Classes: section-2/44-amazon-s3-storage-classes/index.md
+      - Amazon S3 - Lifecycle Rules: section-2/46-amazon-s3-lifecycle-rules/index.md
+      - Amazon S3 - Lifecycle Rules - Hands On: section-2/47-amazon-s3-lifecycle-rules-hands-on/index.md
+      - A note about S3 regional namespaces: section-2/48-a-note-about-s3-regional-namespaces/index.md
+      - Amazon S3 - Replication: section-2/49-amazon-s3-replication/index.md
+      - Amazon S3 - Replication - Notes: section-2/50-amazon-s3-replication-notes/index.md
+      - S3 Encryption: section-2/52-s3-encryption/index.md
+      - About DSSE-KMS: section-2/53-about-dsse-kms/index.md
+      - S3 Default Encryption: section-2/55-s3-default-encryption/index.md
+      - S3 Access Logs: section-2/56-s3-access-logs/index.md
+      - S3 Access Points: section-2/58-s3-access-points/index.md
+    - Agentic AI:
+      - Agentic AI: section-3/index.md
+      - LLM Agents in Bedrock: section-3/01-llm-agents-in-bedrock/index.md
+      - Multi-Agent Workflows: section-3/02-multi-agent-workflows/index.md
+      - Short and Long-Term Agent Memory: section-3/03-short-and-long-term-agent-memory/index.md
+      - Strands Agents: section-3/04-strands-agents/index.md
+      - Agent Squad: section-3/05-agent-squad/index.md
+      - Amazon AgentCore Introduction: section-3/06-amazon-agentcore-introduction/index.md
+      - AgentCore Memory and Tools: section-3/07-agentcore-memory-and-tools/index.md
+      - AgentCore Bedrock Import, Gateway, and Identity: section-3/08-agentcore-bedrock-import-gateway-and-identity/index.md
+      - AgentCore Policies: section-3/09-agentcore-policies/index.md
+      - AgentCore Evaluators: section-3/10-agentcore-evaluators/index.md
+      - Model Context Protocol (MCP): section-3/11-model-context-protocol-mcp/index.md
+      - OpenAPI and Tool Usage: section-3/12-openapi-and-tool-usage/index.md
+      - Humans in the Loop: section-3/13-humans-in-the-loop/index.md
+      - Amazon Q Business: section-3/14-amazon-q-business/index.md
+      - Amazon Q Apps: section-3/15-amazon-q-apps/index.md
+    - Operational Efficiency and Optimization:
+      - Operational Efficiency and Optimization: section-4/index.md
+      - Token Efficiency: section-4/01-token-efficiency/index.md
+      - Cost-Effective Model Selection: section-4/02-cost-effective-model-selection/index.md
+      - Maximizing Resource Utilization and Throughput: section-4/03-maximizing-resource-utilization-and-throughput/index.md
+      - Intelligent Caching Systems for GenAI: section-4/04-intelligent-caching-systems-for-genai/index.md
+      - Building Responsive AI Systems: section-4/05-building-responsive-ai-systems/index.md
+      - Optimizing Retrieval Performance: section-4/06-optimizing-retrieval-performance/index.md
+      - Optimizing for Specific Use Cases: section-4/07-optimizing-for-specific-use-cases/index.md
+      - Optimizing Foundation Model System Performance: section-4/08-optimizing-foundation-model-system-performance/index.md
+      - Exponential Backoff and Connection Pooling: section-4/09-exponential-backoff-and-connection-pooling/index.md
+      - Amazon Bedrock Cross-Region Inference: section-4/10-amazon-bedrock-cross-region-inference/index.md
+    - Section 5: section-5/index.md
+    - Section 6: section-6/index.md
+    - Section 7: section-7/index.md
+    - Section 8: section-8/index.md
+    - Section 9: section-9/index.md
+    - Section 10: section-10/index.md
+    - Section 11: section-11/index.md
+    - Section 12: section-12/index.md
+    - Section 13: section-13/index.md
+    - Section 14: section-14/index.md
+    - Section 15: section-15/index.md
+    - Section 16: section-16/index.md
+    - Section 17: section-17/index.md
+    - Section 18: section-18/index.md
+    - Section 19: section-19/index.md
 
 theme:
   name: material
@@ -59,7 +166,11 @@ plugins:
 markdown_extensions:
   - admonition
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
   - attr_list

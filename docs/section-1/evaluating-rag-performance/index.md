@@ -95,9 +95,9 @@ You do not need to memorize judge prompt wording for the exam—understand the *
 
 ## References
 
-- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
-- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
-- [Optimizing your Vector Store and Embeddings](optimizing-your-vector-store-and-embeddings/index.md)
+- [Retrieval-Augmented Generation (RAG)](../retrieval-augmented-generation-rag/index.md)
+- [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md)
+- [Optimizing your Vector Store and Embeddings](../optimizing-your-vector-store-and-embeddings/index.md)
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-evaluate.html">Evaluate the performance of RAG sources</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-evaluation.html">Evaluate the performance of models</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Knowledge bases</a>

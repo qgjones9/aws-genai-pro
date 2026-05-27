@@ -123,11 +123,11 @@ EventBridge on new S3 product sheets → Lambda embedding job → SQS → SAP ca
 
 **In this repo**
 
-- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
-- [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md)
-- [Vector Stores and Semantic Search](vector-stores-and-semantic-search/index.md)
-- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
-- [Bedrock Guardrails](bedrock-guardrails/index.md)
+- [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md)
+- [Hands-On with Knowledge Bases](../hands-on-with-knowledge-bases/index.md)
+- [Vector Stores and Semantic Search](../vector-stores-and-semantic-search/index.md)
+- [Retrieval-Augmented Generation (RAG)](../retrieval-augmented-generation-rag/index.md)
+- [Bedrock Guardrails](../bedrock-guardrails/index.md)
 
 **AWS documentation**
 

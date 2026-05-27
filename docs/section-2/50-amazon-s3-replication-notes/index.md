@@ -138,7 +138,6 @@ A fintech firm initially chained `transactions-prod → transactions-warm → tr
 **In this repo**
 
 - [Amazon S3 - Replication](../49-amazon-s3-replication/index.md) (CRR/SRR intro, prerequisites, use cases)
-- [Amazon S3 - Replication - Hands On](../51-amazon-s3-replication-hands-on/index.md) (console/CLI practice)
 - [Amazon S3 - Lifecycle Rules](../46-amazon-s3-lifecycle-rules/index.md) (lifecycle deletes vs replication behavior)
 
 **AWS documentation**

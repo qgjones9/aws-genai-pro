@@ -1,4 +1,4 @@
-# Section 3: Agentic AI
+# Agentic AI
 
 | Lecture Title | Lecture Description |
 |--------------|--------------------|

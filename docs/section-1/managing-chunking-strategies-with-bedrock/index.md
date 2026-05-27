@@ -99,8 +99,8 @@ chunking_configuration = {
 
 ## References
 
-- [Pre-Retrieval and Chunking Strategies](pre-retrieval-and-chunking-strategies/index.md)
-- [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md)
-- [Optimizing your Vector Store and Embeddings](optimizing-your-vector-store-and-embeddings/index.md)
+- [Pre-Retrieval and Chunking Strategies](../pre-retrieval-and-chunking-strategies/index.md)
+- [Hands-On with Knowledge Bases](../hands-on-with-knowledge-bases/index.md)
+- [Optimizing your Vector Store and Embeddings](../optimizing-your-vector-store-and-embeddings/index.md)
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking.html">Customize chunking for a data source</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Knowledge bases</a>

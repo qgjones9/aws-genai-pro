@@ -116,10 +116,10 @@ Chunk inspection in the console shows ~**300-token** chunks and optional **metad
 
 ## References
 
-- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
-- [Really, don't leave OpenSearch up and running for long!](really-dont-leave-opensearch-up-and-running-for-long/index.md)
-- [Managing Chunking Strategies with Bedrock](managing-chunking-strategies-with-bedrock/index.md)
-- [Pre-Retrieval and Chunking Strategies](pre-retrieval-and-chunking-strategies/index.md)
+- [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md)
+- [Really, don't leave OpenSearch up and running for long!](../really-dont-leave-opensearch-up-and-running-for-long/index.md)
+- [Managing Chunking Strategies with Bedrock](../managing-chunking-strategies-with-bedrock/index.md)
+- [Pre-Retrieval and Chunking Strategies](../pre-retrieval-and-chunking-strategies/index.md)
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-create.html">Create a knowledge base</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test.html">Test a knowledge base</a>
 - <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/GetStartedWithS3.html">Getting started with Amazon S3</a>

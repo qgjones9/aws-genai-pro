@@ -235,7 +235,6 @@ As you look to implement this, how do you choose which database tool to use?
 
 **In this repo**
 
-- [Amazon RDS - Hands On](../27-amazon-rds-hands-on/index.md)
 - [Amazon RDS with S3 Document Repositories](../28-amazon-rds-with-s3-document-repositories/index.md)
 - [Amazon Aurora](../29-amazon-aurora/index.md)
 - [Amazon Aurora and the pgvector Extension](../31-amazon-aurora-and-the-pgvector-extension/index.md)

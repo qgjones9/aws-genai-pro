@@ -186,7 +186,6 @@ A insurance partner uploads claim bundles with **SSE-C**. The receiving bucket k
 
 - [S3 Encryption](../52-s3-encryption/index.md) (SSE-S3, SSE-KMS, SSE-C, client-side, HTTPS enforcement)
 - [About DSSE-KMS](../53-about-dsse-kms/index.md) (dual-layer default option in console/API)
-- [S3 Encryption - Hands On](../54-s3-encryption-hands-on/index.md) (console/CLI practice)
 
 **AWS documentation**
 

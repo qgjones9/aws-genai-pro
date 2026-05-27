@@ -225,7 +225,6 @@ Daily feature stores stay in **Standard** for ETL. Nightly snapshot exports tran
 - [Keeping your Vector Store Up to Date](../42-keeping-your-vector-store-up-to-date/index.md) (S3 events driving ingestion pipelines)
 - [Amazon S3 Vectors](../24-amazon-s3-vectors/index.md) (vector storage on S3)
 - [Amazon S3 - Lifecycle Rules](../46-amazon-s3-lifecycle-rules/index.md) (automated transitions between classes)
-- [Amazon S3 - Storage Classes - Hands On](../45-amazon-s3-storage-classes-hands-on/index.md)
 
 **AWS documentation**
 

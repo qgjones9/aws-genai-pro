@@ -83,7 +83,7 @@ with amazondax.AmazonDaxClient.resource(
     item = table.get_item(Key={"productId": "featured-001"})
 ```
 
-The hands-on lesson ([Amazon DynamoDB DAX - Hands On](../39-amazon-dynamodb-dax-hands-on/index.md)) walks through **creating a DAX cluster** in the console.
+The console walkthrough covers **creating a DAX cluster** in the AWS Management Console.
 
 ### Examples
 
@@ -139,7 +139,6 @@ Risk analysts need a view built from DynamoDB orders plus **client-side aggregat
 - [Amazon DynamoDB](../32-amazon-dynamodb/index.md)
 - [Amazon DynamoDB - WCU & RCU](../34-amazon-dynamodb-wcu-and-rcu/index.md)
 - [Amazon DynamoDB - Basic APIs](../36-amazon-dynamodb-basic-apis/index.md)
-- [Amazon DynamoDB DAX - Hands On](../39-amazon-dynamodb-dax-hands-on/index.md)
 
 **AWS documentation**
 

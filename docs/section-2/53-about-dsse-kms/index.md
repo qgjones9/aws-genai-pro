@@ -84,7 +84,6 @@ aws s3 cp sensitive-contract.pdf s3://compliance-archive-prod/legal/ \
 **In this repo**
 
 - [S3 Encryption](../52-s3-encryption/index.md) (SSE-S3, SSE-KMS, SSE-C, client-side—main course coverage)
-- [S3 Encryption - Hands On](../54-s3-encryption-hands-on/index.md) (where you may see DSSE-KMS in the UI)
 - [S3 Default Encryption](../55-s3-default-encryption/index.md) (bucket default encryption settings)
 
 **AWS documentation**

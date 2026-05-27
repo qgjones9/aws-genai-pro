@@ -89,7 +89,7 @@ Batch-generate “team photo” images; vision model counts perceived demographi
 - **Guardrails** can false-positive on legitimate content; tune thresholds.
 - **Prompt-level diversity** requests do not fix systemic training bias without data work.
 - **Counterfactual augmentation** is engineering-heavy and may look unnatural if done poorly.
-- PII in **retrieved RAG context** still needs **token-level** handling—see [Token-Level Redaction](token-level-redaction/index.md) and [Bedrock Guardrails](bedrock-guardrails/index.md).
+- PII in **retrieved RAG context** still needs **token-level** handling—see [Token-Level Redaction](../token-level-redaction/index.md) and [Bedrock Guardrails](../bedrock-guardrails/index.md).
 
 ## Industry scenarios
 
@@ -117,11 +117,11 @@ Block injection that exfiltrates repo secrets; system prompt describes tools but
 
 **In this repo**
 
-- [Bedrock Guardrails](bedrock-guardrails/index.md)
-- [Hands-On with Bedrock Guardrails](hands-on-with-bedrock-guardrails/index.md)
-- [Token-Level Redaction](token-level-redaction/index.md)
-- [Prompt Best Practices](prompt-best-practices/index.md)
-- [Types of Prompts](types-of-prompts/index.md)
+- [Bedrock Guardrails](../bedrock-guardrails/index.md)
+- [Hands-On with Bedrock Guardrails](../hands-on-with-bedrock-guardrails/index.md)
+- [Token-Level Redaction](../token-level-redaction/index.md)
+- [Prompt Best Practices](../prompt-best-practices/index.md)
+- [Types of Prompts](../types-of-prompts/index.md)
 
 **AWS documentation**
 

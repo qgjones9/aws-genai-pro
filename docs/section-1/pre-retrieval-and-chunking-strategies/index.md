@@ -63,7 +63,7 @@ Document:
 # Then ingest resulting chunks into Bedrock Knowledge Base (possibly with "no chunking")
 ```
 
-Bedrock-specific chunking controls are detailed in [Managing Chunking Strategies with Bedrock](managing-chunking-strategies-with-bedrock/index.md).
+Bedrock-specific chunking controls are detailed in [Managing Chunking Strategies with Bedrock](../managing-chunking-strategies-with-bedrock/index.md).
 
 ## Examples
 
@@ -95,9 +95,9 @@ Bedrock-specific chunking controls are detailed in [Managing Chunking Strategies
 
 ## References
 
-- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
-- [Managing Chunking Strategies with Bedrock](managing-chunking-strategies-with-bedrock/index.md)
-- [Optimizing your Vector Store and Embeddings](optimizing-your-vector-store-and-embeddings/index.md)
-- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
+- [Retrieval-Augmented Generation (RAG)](../retrieval-augmented-generation-rag/index.md)
+- [Managing Chunking Strategies with Bedrock](../managing-chunking-strategies-with-bedrock/index.md)
+- [Optimizing your Vector Store and Embeddings](../optimizing-your-vector-store-and-embeddings/index.md)
+- [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md)
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking.html">Knowledge base chunking</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-retrieval.html">Retrieval from knowledge bases</a>

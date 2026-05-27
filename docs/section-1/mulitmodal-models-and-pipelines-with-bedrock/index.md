@@ -109,9 +109,9 @@ Preprocessing belongs **before** model invoke—whether implemented in Bedrock f
 
 ## References
 
-- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
-- [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md) (parser options for images/PDFs)
-- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
+- [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md)
+- [Hands-On with Knowledge Bases](../hands-on-with-knowledge-bases/index.md) (parser options for images/PDFs)
+- [Retrieval-Augmented Generation (RAG)](../retrieval-augmented-generation-rag/index.md)
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-multiemb-models.html">Titan Multimodal Embeddings G1</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html">Supported foundation models in Amazon Bedrock</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_InvokeModel.html">InvokeModel</a>

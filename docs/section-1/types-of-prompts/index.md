@@ -110,15 +110,15 @@ CoT prompts walk junior engineers through diagnosis trees for production alerts,
 - **Few-shot** shapes **format** as much as **semantics** (sentiment → single word).
 - **CoT** = decomposition cue + optional **explicit step list** for harder procedural tasks.
 - Match pattern to **task familiarity** and **output structure** requirements.
-- Bedrock applications often combine patterns with RAG—see [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md).
+- Bedrock applications often combine patterns with RAG—see [Retrieval-Augmented Generation (RAG)](../retrieval-augmented-generation-rag/index.md).
 
 ## References
 
 **In this repo**
 
-- [Prompt Best Practices](prompt-best-practices/index.md)
-- [Anatomy of a Prompt](anatomy-of-a-prompt/index.md)
-- [Prompt Misuse and Mitigating Bias](prompt-misuse-and-mitigating-bias/index.md)
+- [Prompt Best Practices](../prompt-best-practices/index.md)
+- [Anatomy of a Prompt](../anatomy-of-a-prompt/index.md)
+- [Prompt Misuse and Mitigating Bias](../prompt-misuse-and-mitigating-bias/index.md)
 
 **AWS documentation**
 

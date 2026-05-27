@@ -114,10 +114,10 @@ See [section-2 re-ranker content](../../section-2/43-re-ranker-modules-in-bedroc
 
 ## References
 
-- [Vector Stores and Semantic Search](vector-stores-and-semantic-search/index.md)
-- [Managing Chunking Strategies with Bedrock](managing-chunking-strategies-with-bedrock/index.md)
-- [Pre-Retrieval and Chunking Strategies](pre-retrieval-and-chunking-strategies/index.md)
-- [Evaluating RAG Performance](evaluating-rag-performance/index.md)
+- [Vector Stores and Semantic Search](../vector-stores-and-semantic-search/index.md)
+- [Managing Chunking Strategies with Bedrock](../managing-chunking-strategies-with-bedrock/index.md)
+- [Pre-Retrieval and Chunking Strategies](../pre-retrieval-and-chunking-strategies/index.md)
+- [Evaluating RAG Performance](../evaluating-rag-performance/index.md)
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html">Amazon Titan Text Embeddings</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-metadata.html">Include metadata in a knowledge base</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_StartIngestionJob.html">StartIngestionJob</a>

@@ -99,10 +99,10 @@ Instructions to explain an API; context from ingested OpenAPI specs; input data 
 
 **In this repo**
 
-- [Intro to Prompt Engineering](intro-to-prompt-engineering/index.md)
-- [Prompt Best Practices](prompt-best-practices/index.md)
-- [Types of Prompts](types-of-prompts/index.md)
-- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
+- [Intro to Prompt Engineering](../intro-to-prompt-engineering/index.md)
+- [Prompt Best Practices](../prompt-best-practices/index.md)
+- [Types of Prompts](../types-of-prompts/index.md)
+- [Retrieval-Augmented Generation (RAG)](../retrieval-augmented-generation-rag/index.md)
 
 **AWS documentation**
 

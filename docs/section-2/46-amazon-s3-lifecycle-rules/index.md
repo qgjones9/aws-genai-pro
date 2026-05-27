@@ -176,7 +176,6 @@ Daily feature-export dumps start in **Standard** for ETL. **Storage Class Analys
 **In this repo**
 
 - [Amazon S3 - Storage Classes](../44-amazon-s3-storage-classes/index.md) (class trade-offs and minimum durations)
-- [Amazon S3 - Storage Classes - Hands On](../45-amazon-s3-storage-classes-hands-on/index.md)
 - [Keeping your Vector Store Up to Date](../42-keeping-your-vector-store-up-to-date/index.md) (S3 events and ingestion pipelines)
 
 **AWS documentation**

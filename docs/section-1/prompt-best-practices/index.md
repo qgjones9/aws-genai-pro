@@ -109,10 +109,10 @@ Few-shot sentiment (or category) examples in prompts produce CSV-friendly single
 
 **In this repo**
 
-- [Anatomy of a Prompt](anatomy-of-a-prompt/index.md)
-- [Types of Prompts](types-of-prompts/index.md)
-- [Intro to Prompt Engineering](intro-to-prompt-engineering/index.md)
-- [Enforcing Use of Structured Data](enforcing-use-of-structured-data/index.md)
+- [Anatomy of a Prompt](../anatomy-of-a-prompt/index.md)
+- [Types of Prompts](../types-of-prompts/index.md)
+- [Intro to Prompt Engineering](../intro-to-prompt-engineering/index.md)
+- [Enforcing Use of Structured Data](../enforcing-use-of-structured-data/index.md)
 
 **AWS documentation**
 

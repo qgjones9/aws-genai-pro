@@ -131,7 +131,6 @@ A team runs RAG experiments in a **test account** that must see the same documen
 - [Amazon S3 - Storage Classes](../44-amazon-s3-storage-classes/index.md) (destination storage class choices)
 - [A note about S3 regional namespaces](../48-a-note-about-s3-regional-namespaces/index.md) (bucket naming when creating source/destination buckets)
 - [Amazon S3 - Replication - Notes](../50-amazon-s3-replication-notes/index.md) (follow-on edge cases)
-- [Amazon S3 - Replication - Hands On](../51-amazon-s3-replication-hands-on/index.md) (practice)
 
 **AWS documentation**
 

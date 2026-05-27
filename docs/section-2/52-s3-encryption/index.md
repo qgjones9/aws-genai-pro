@@ -211,7 +211,6 @@ A video platform lets enterprise customers keep master keys in their vault. Clip
 - [Amazon S3 - Replication - Notes](../50-amazon-s3-replication-notes/index.md) (batch replication and delete behavior with encrypted buckets)
 - [About DSSE-KMS](../53-about-dsse-kms/index.md) (dual-layer KMS encryption—follow-on topic)
 - [S3 Default Encryption](../55-s3-default-encryption/index.md) (bucket default encryption settings)
-- [S3 Encryption - Hands On](../54-s3-encryption-hands-on/index.md) (console/CLI practice)
 
 **AWS documentation**
 

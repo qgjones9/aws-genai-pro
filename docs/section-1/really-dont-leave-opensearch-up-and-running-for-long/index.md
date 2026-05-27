@@ -46,7 +46,7 @@ No API snippet is required for the exam focus here; the lecture is procedural cl
 
 ## Examples
 
-- **Taking a break mid-course**: You finish [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md) but will not start agent labs for weeks → delete KB and OpenSearch Serverless collection to avoid ~$200/month idle cost.
+- **Taking a break mid-course**: You finish [Hands-On with Knowledge Bases](../hands-on-with-knowledge-bases/index.md) but will not start agent labs for weeks → delete KB and OpenSearch Serverless collection to avoid ~$200/month idle cost.
 - **Forgot collection only**: Knowledge base gone from Bedrock, but OpenSearch Serverless dashboard still shows a collection → bills continue until collection deletion.
 
 ## Limitations / edge cases
@@ -70,7 +70,7 @@ No API snippet is required for the exam focus here; the lecture is procedural cl
 
 ## References
 
-- [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md)
-- [Bedrock Knowledge Bases](bedrock-knowledge-bases/index.md)
+- [Hands-On with Knowledge Bases](../hands-on-with-knowledge-bases/index.md)
+- [Bedrock Knowledge Bases](../bedrock-knowledge-bases/index.md)
 - <a href="https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless.html">Amazon OpenSearch Serverless</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-setup.html">Set up a knowledge base</a>

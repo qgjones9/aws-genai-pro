@@ -116,7 +116,6 @@ flowchart TD
 
 - [Amazon S3 - Lifecycle Rules](../46-amazon-s3-lifecycle-rules/index.md) (expire access logs; expiration use case)
 - [S3 Default Encryption](../55-s3-default-encryption/index.md) (encrypting buckets—including log buckets)
-- [S3 Access Logs - Hands On](../57-s3-access-logs-hands-on/index.md) (console/CLI practice)
 
 **AWS documentation**
 

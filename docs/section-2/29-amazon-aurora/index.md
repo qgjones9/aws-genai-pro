@@ -278,8 +278,6 @@ By paying a small 20% premium over standard RDS, you gain a cloud-native engine 
 **In this repo**
 
 - [Amazon RDS](../26-amazon-rds/index.md)
-- [Amazon RDS - Hands On](../27-amazon-rds-hands-on/index.md)
-- [Amazon Aurora - Hands On](../30-amazon-aurora-hands-on/index.md)
 - [Amazon Aurora and the pgvector Extension](../31-amazon-aurora-and-the-pgvector-extension/index.md)
 - [Dealing with Structured Data](../02-dealing-with-structured-data/index.md)
 

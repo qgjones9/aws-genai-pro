@@ -72,7 +72,7 @@ response = client.retrieve_and_generate(
 print(response["output"]["text"])
 ```
 
-See [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md) for console steps and [Vector Stores and Semantic Search](vector-stores-and-semantic-search/index.md) for embedding/search fundamentals.
+See [Hands-On with Knowledge Bases](../hands-on-with-knowledge-bases/index.md) for console steps and [Vector Stores and Semantic Search](../vector-stores-and-semantic-search/index.md) for embedding/search fundamentals.
 
 ## Examples
 
@@ -103,10 +103,10 @@ See [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md) for 
 
 ## References
 
-- [Retrieval-Augmented Generation (RAG)](retrieval-augmented-generation-rag/index.md)
-- [Vector Stores and Semantic Search](vector-stores-and-semantic-search/index.md)
-- [Hands-On with Knowledge Bases](hands-on-with-knowledge-bases/index.md)
-- [Pre-Retrieval and Chunking Strategies](pre-retrieval-and-chunking-strategies/index.md)
-- [Really, don't leave OpenSearch up and running for long!](really-dont-leave-opensearch-up-and-running-for-long/index.md)
+- [Retrieval-Augmented Generation (RAG)](../retrieval-augmented-generation-rag/index.md)
+- [Vector Stores and Semantic Search](../vector-stores-and-semantic-search/index.md)
+- [Hands-On with Knowledge Bases](../hands-on-with-knowledge-bases/index.md)
+- [Pre-Retrieval and Chunking Strategies](../pre-retrieval-and-chunking-strategies/index.md)
+- [Really, don't leave OpenSearch up and running for long!](../really-dont-leave-opensearch-up-and-running-for-long/index.md)
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases</a>
 - <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-how-it-works.html">How knowledge bases work</a>

@@ -114,11 +114,11 @@ Operational excellence pillar standardizes logging for Converse API calls; measu
 
 **In this repo**
 
-- [Amazon Bedrock Overview](amazon-bedrock-overview/index.md)
-- [Bedrock Guardrails](bedrock-guardrails/index.md)
-- [Evaluating RAG Performance](evaluating-rag-performance/index.md)
-- [Enterprise Integration](enterprise-integration/index.md)
-- [Quiz: Bedrock and GenAI Fundamentals](quiz-bedrock-and-genai-fundamentals/index.md)
+- [Amazon Bedrock Overview](../amazon-bedrock-overview/index.md)
+- [Bedrock Guardrails](../bedrock-guardrails/index.md)
+- [Evaluating RAG Performance](../evaluating-rag-performance/index.md)
+- [Enterprise Integration](../enterprise-integration/index.md)
+- [Quiz: Bedrock and GenAI Fundamentals](../quiz-bedrock-and-genai-fundamentals/index.md)
 
 **AWS documentation**
 

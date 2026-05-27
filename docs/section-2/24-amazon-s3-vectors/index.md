@@ -222,7 +222,6 @@ An enterprise embeds runbooks and postmortems for an internal support bot. Engin
 
 - [Using and Tuning OpenSearch as a Vector Store](../23-using-and-tuning-opensearch-as-a-vector-store/index.md)
 - [Amazon OpenSearch Serverless](../22-amazon-opensearch-serverless/index.md)
-- [Amazon S3 Vectors - Hands On](../25-amazon-s3-vectors-hands-on/index.md)
 
 **AWS documentation**
 
