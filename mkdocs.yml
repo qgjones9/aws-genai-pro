@@ -124,7 +124,21 @@ nav:
       - Optimizing Foundation Model System Performance: section-4/08-optimizing-foundation-model-system-performance/index.md
       - Exponential Backoff and Connection Pooling: section-4/09-exponential-backoff-and-connection-pooling/index.md
       - Amazon Bedrock Cross-Region Inference: section-4/10-amazon-bedrock-cross-region-inference/index.md
-    - Section 5: section-5/index.md
+    - Managing Models with SageMaker AI:
+      - Managing Models with SageMaker AI: section-5/index.md
+      - Intro to Amazon SageMaker AI: section-5/01-intro-to-amazon-sagemaker-ai/index.md
+      - Data Processing, Training, and Deployment with SageMaker: section-5/02-data-processing-training-and-deployment-with-sagemaker/index.md
+      - SageMaker Deployment Safeguards: section-5/03-sagemaker-deployment-safeguards/index.md
+      - Optimizing Foundation Model Deployments: section-5/04-optimizing-foundation-model-deployments/index.md
+      - SageMaker Ground Truth: section-5/05-sagemaker-ground-truth/index.md
+      - SageMaker Model Monitor and Clarify: section-5/06-sagemaker-model-monitor-and-clarify/index.md
+      - SageMaker Model Registry: section-5/07-sagemaker-model-registry/index.md
+      - SageMaker Lineage Tracking: section-5/08-sagemaker-lineage-tracking/index.md
+      - Cross-Account Lineage Tracking: section-5/09-cross-account-lineage-tracking/index.md
+      - SageMaker on the Edge (Neo): section-5/10-sagemaker-on-the-edge-neo/index.md
+      - SageMaker Unified Studio: section-5/11-sagemaker-unified-studio/index.md
+      - SageMaker Pipelines: section-5/12-sagemaker-pipelines/index.md
+      - Hands On: SageMaker JumpStart: section-5/13-hands-on-sagemaker-jumpstart/index.md
     - Section 6: section-6/index.md
     - Section 7: section-7/index.md
     - Section 8: section-8/index.md
