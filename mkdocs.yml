@@ -138,7 +138,7 @@ nav:
       - SageMaker on the Edge (Neo): section-5/10-sagemaker-on-the-edge-neo/index.md
       - SageMaker Unified Studio: section-5/11-sagemaker-unified-studio/index.md
       - SageMaker Pipelines: section-5/12-sagemaker-pipelines/index.md
-      - Hands On: SageMaker JumpStart: section-5/13-hands-on-sagemaker-jumpstart/index.md
+      - "Hands On: SageMaker JumpStart": section-5/13-hands-on-sagemaker-jumpstart/index.md
     - Section 6: section-6/index.md
     - Section 7: section-7/index.md
     - Section 8: section-8/index.md
