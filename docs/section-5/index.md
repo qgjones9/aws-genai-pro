@@ -14,4 +14,3 @@
 | [SageMaker on the Edge (Neo)](10-sagemaker-on-the-edge-neo/index.md) | Compiling and deploying models to edge devices with Neo. |
 | [SageMaker Unified Studio](11-sagemaker-unified-studio/index.md) | Unified workspace for data, ML, and analytics on SageMaker. |
 | [SageMaker Pipelines](12-sagemaker-pipelines/index.md) | Orchestrating reproducible ML workflows with SageMaker Pipelines. |
-| [Hands On: SageMaker JumpStart](13-hands-on-sagemaker-jumpstart/index.md) | Practical lab using SageMaker JumpStart pretrained models. |
