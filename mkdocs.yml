@@ -138,7 +138,33 @@ nav:
       - SageMaker on the Edge (Neo): section-5/10-sagemaker-on-the-edge-neo/index.md
       - SageMaker Unified Studio: section-5/11-sagemaker-unified-studio/index.md
       - SageMaker Pipelines: section-5/12-sagemaker-pipelines/index.md
-    - Section 6: section-6/index.md
+    - Building Applications Around Your AI System:
+      - Building Applications Around Your AI System: section-6/index.md
+      - AWS Lambda: section-6/01-aws-lambda/index.md
+      - Lambda Integration: section-6/02-lambda-integration/index.md
+      - Lambda with Bedrock: section-6/03-lambda-with-bedrock/index.md
+      - Amazon API Gateway: section-6/04-amazon-api-gateway/index.md
+      - Amazon API Gateway and Generative AI Applications: section-6/05-amazon-api-gateway-and-generative-ai-applications/index.md
+      - AWS AppConfig: section-6/06-aws-appconfig/index.md
+      - Dynamic FM Selection with AppConfig: section-6/07-dynamic-fm-selection-with-appconfig/index.md
+      - AWS Step Functions: section-6/08-aws-step-functions/index.md
+      - Step Function States: section-6/09-step-function-states/index.md
+      - Step Functions Circuit Breaker Pattern, and AI Integration: section-6/10-step-functions-circuit-breaker-pattern-and-ai-integration/index.md
+      - "Lab: Prompt Chaining with Step Functions and Bedrock": section-6/11-lab-prompt-chaining-with-step-functions-and-bedrock/index.md
+      - AWS CodePipeline: section-6/12-aws-codepipeline/index.md
+      - AWS CodeBuild: section-6/13-aws-codebuild/index.md
+      - AWS CodeDeploy: section-6/14-aws-codedeploy/index.md
+      - MLFlow for LLM Experimentation: section-6/15-mlflow-for-llm-experimentation/index.md
+      - AWS AppSync and GenAI: section-6/16-aws-appsync-and-genai/index.md
+      - AWS Outposts: section-6/17-aws-outposts/index.md
+      - AWS Outposts and GenAI: section-6/18-aws-outposts-and-genai/index.md
+      - AWS Wavelength: section-6/19-aws-wavelength/index.md
+      - AWS Wavelength and GenAI: section-6/20-aws-wavelength-and-genai/index.md
+      - Amazon SQS: section-6/21-amazon-sqs/index.md
+      - AWS Amplify: section-6/22-aws-amplify/index.md
+      - Amazon EventBridge: section-6/23-amazon-eventbridge/index.md
+      - Amazon SNS: section-6/24-amazon-sns/index.md
+      - Amazon AppFlow: section-6/25-amazon-appflow/index.md
     - Section 7: section-7/index.md
     - Section 8: section-8/index.md
     - Section 9: section-9/index.md
